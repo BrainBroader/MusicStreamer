@@ -59,8 +59,8 @@ public class MusicFile {
         return this.musicFileExtract;
     }
 
-    public String toString() {
-        return "Title: " + getTrackName() + " Artist: " + getArtistName() + " Album: " + getAlbumInfo() + " Genre: " + getGenre();
+    public void printTrack() {
+        System.out.println("Title: " + getTrackName() + " | Artist: " + getArtistName() + " | Album: " + getAlbumInfo() + " | Genre: " + getGenre());
     }
 
 
