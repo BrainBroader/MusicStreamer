@@ -68,23 +68,30 @@ public class Mp3Parse {
         List<byte[]> ret = new ArrayList<byte[]>();
 
         int bytes = array.length;
+        int loops = 0;
+        if (bytes % 64000 == 0) {
+            loops = bytes / 64000;
+        } else {
+            loops = (bytes / 64000) + 1;
+        }
 
-        for (int i = 0; i < bytes; i = i + 64000) {
 
-            if (i + 64000 >= bytes) {
-                int last_bytes = bytes - i;
-                int counter = 0;
-                for (int j = i; j < j + last_bytes; j++) {
-                    byte[] n = new byte[last_bytes];
-                    n[counter++] = array[j];
+        for (int i = 0; i < loops; i++) {
+
+            if (i == loops - 1) {
+                byte[] a = new byte[array.length - i * 64000];
+                for (int j = 0; j < a.length; j++) {
+                    a[j] = array[(i * 64000) + j];
                 }
+                ret.add(a);
             } else {
-                int counter = 0;
-                for (int j = i; j < j + 64000; j++) {
-                    byte[] n = new byte[64000];
-                    n[counter++] = array[j];
+                byte[] a = new byte[64000];
+                for (int j = 0; j < 64000; j++) {
+                    a[j] = array[(i * 64000) + j];
                 }
+                ret.add(a);
             }
+
         }
 
         return ret;
@@ -95,7 +102,7 @@ public class Mp3Parse {
     {
 
         try {
-            /*ArrayList<MusicFile> array = new ArrayList<MusicFile>();
+            ArrayList<MusicFile> array = new ArrayList<MusicFile>();
             String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΑ\\dataset1\\Comedy";
 
             Path dir = FileSystems.getDefault().getPath(filepath);
@@ -106,12 +113,15 @@ public class Mp3Parse {
                 String p = filepath + "/" +(path.getFileName()).toString();
                 MusicFile m = new MusicFile();
                 m = mp3extraction(p);
-                array.add(m);
+                List<byte[]> list = new ArrayList<byte[]>();
+                list = chunks(m.getMusicFileExtract());
+                m.printTrack();
+                //array.add(m);
 
             }
-            stream.close();*/
+            stream.close();
 
-            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΑ\\dataset1\\Comedy\\A Surprising Encounter.mp3";
+            /*String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΑ\\dataset1\\Comedy\\A Surprising Encounter.mp3";
             MusicFile m = new MusicFile();
             m = mp3extraction(filepath);
             m.printTrack();
@@ -122,7 +132,7 @@ public class Mp3Parse {
 
             System.out.println(list.size());
 
-            /*byte[] array = m.getMusicFileExtract();
+            byte[] array = m.getMusicFileExtract();
             for (int i = 0; i < array.length; i++) {
                 System.out.println(array[i]);
             }*/

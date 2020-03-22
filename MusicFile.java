@@ -60,7 +60,7 @@ public class MusicFile {
     }
 
     public void printTrack() {
-        System.out.println("Title: " + getTrackName() + " | Artist: " + getArtistName() + " | Album: " + getAlbumInfo() + " | Genre: " + getGenre());
+        System.out.println("Title: " + getTrackName() + " | Artist: " + getArtistName() + " | Album: " + getAlbumInfo() + " | Genre: " + getGenre()+ " | " + getMusicFileExtract().length + "byte");
     }
 
 
