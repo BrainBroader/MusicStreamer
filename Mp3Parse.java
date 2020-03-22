@@ -98,6 +98,24 @@ public class Mp3Parse {
 
     }
 
+    public static void createMP3(MusicFile m, String path) throws IOException {
+
+        File f = null;
+
+        try	{
+            f = new File(path);
+        }
+        catch (NullPointerException e) {
+            System.out.println ("Can't create file");
+        }
+
+        FileOutputStream outputstream = new FileOutputStream(f);
+        outputstream.write(m.getMusicFileExtract());
+
+        outputstream.close();
+        System.out.println("Creating Mp3... "+ path);
+    }
+
     public static void main(String args[])
     {
 
@@ -115,7 +133,8 @@ public class Mp3Parse {
                 m = mp3extraction(p);
                 List<byte[]> list = new ArrayList<byte[]>();
                 list = chunks(m.getMusicFileExtract());
-                m.printTrack();
+
+                createMP3(m, path.getFileName().toString());
                 //array.add(m);
 
             }
@@ -131,6 +150,8 @@ public class Mp3Parse {
 
 
             System.out.println(list.size());
+
+            createMP3(m,"syme.mp3");
 
             byte[] array = m.getMusicFileExtract();
             for (int i = 0; i < array.length; i++) {
