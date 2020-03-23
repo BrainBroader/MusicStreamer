@@ -14,6 +14,10 @@ import org.xml.sax.SAXException;
 
 public class Mp3Parse {
 
+    public Mp3Parse() {
+
+    }
+
     public static MusicFile mp3extraction(String path) throws Exception, IOException, SAXException, TikaException {
 
         String trackName = null;
@@ -64,8 +68,8 @@ public class Mp3Parse {
         return song;
     }
 
-    public static List<byte[]> chunks(byte[] array) throws IOException {
-        List<byte[]> ret = new ArrayList<byte[]>();
+    public static List<MusicFile> chunks(byte[] array, MusicFile music) throws IOException {
+        List<MusicFile> ret = new ArrayList<MusicFile>();
 
         int bytes = array.length;
         int loops = 0;
@@ -79,17 +83,21 @@ public class Mp3Parse {
         for (int i = 0; i < loops; i++) {
 
             if (i == loops - 1) {
+
                 byte[] a = new byte[array.length - i * 64000];
                 for (int j = 0; j < a.length; j++) {
                     a[j] = array[(i * 64000) + j];
                 }
-                ret.add(a);
+                MusicFile m = new MusicFile(music.getTrackName(),music.getArtistName(),music.getAlbumInfo(),music.getGenre(),a);
+                ret.add(m);
+
             } else {
                 byte[] a = new byte[64000];
                 for (int j = 0; j < 64000; j++) {
                     a[j] = array[(i * 64000) + j];
                 }
-                ret.add(a);
+                MusicFile m = new MusicFile(music.getTrackName(),music.getArtistName(),music.getAlbumInfo(),music.getGenre(),a);
+                ret.add(m);
             }
 
         }
@@ -120,7 +128,7 @@ public class Mp3Parse {
     {
 
         try {
-            ArrayList<MusicFile> array = new ArrayList<MusicFile>();
+            /*ArrayList<MusicFile> array = new ArrayList<MusicFile>();
             String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΑ\\dataset1\\Comedy";
 
             Path dir = FileSystems.getDefault().getPath(filepath);
@@ -131,37 +139,31 @@ public class Mp3Parse {
                 String p = filepath + "/" +(path.getFileName()).toString();
                 MusicFile m = new MusicFile();
                 m = mp3extraction(p);
-                List<byte[]> list = new ArrayList<byte[]>();
-                list = chunks(m.getMusicFileExtract());
+                List<MusicFile> list = new ArrayList<MusicFile>();
+                list = chunks(m.getMusicFileExtract(), m);
 
-                createMP3(m, path.getFileName().toString());
+                //createMP3(m, path.getFileName().toString());
                 //array.add(m);
 
             }
-            stream.close();
+            stream.close();*/
 
-            /*String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΑ\\dataset1\\Comedy\\A Surprising Encounter.mp3";
+            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΑ\\dataset1\\Comedy\\A Surprising Encounter.mp3";
             MusicFile m = new MusicFile();
             m = mp3extraction(filepath);
             m.printTrack();
 
-            List<byte[]> list = new ArrayList<byte[]>();
-            list = chunks(m.getMusicFileExtract());
+            List<MusicFile> list = new ArrayList<MusicFile>();
+            list = chunks(m.getMusicFileExtract(),m);
+
+            for (int i = 0; i < list.size(); i++) {
+                list.get(i).printTrack();
+            }
 
 
             System.out.println(list.size());
 
             createMP3(m,"syme.mp3");
-
-            byte[] array = m.getMusicFileExtract();
-            for (int i = 0; i < array.length; i++) {
-                System.out.println(array[i]);
-            }*/
-
-
-
-
-
 
         } catch (Exception e) {
             e.printStackTrace();
