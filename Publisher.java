@@ -11,10 +11,26 @@ import java.util.List;
 
 
 
-public class Publisher extends Thread {
+public class Publisher extends Node {
 
     public Publisher() {
 
+    }
+
+    public void getBrokerList() {
+
+    }
+
+    public Broker hashTopic(ArtistName a) {
+        return null;
+    }
+
+    public void push(ArtistName a, Value v) {
+
+    }
+
+    public void notifyFailure(Broker b) {
+        
     }
 
     public void run() {
