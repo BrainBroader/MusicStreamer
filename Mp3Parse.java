@@ -29,14 +29,14 @@ public class Mp3Parse {
         Mp3File mp3file = new Mp3File(path);
         if(mp3file.hasId3v1Tag()){
             ID3v1 tag1 = mp3file.getId3v1Tag();
-            genre = Integer.toString(tag1.getGenre());
+            genre = tag1.getGenreDescription();
             artistName = tag1.getArtist();
             albumInfo = tag1.getAlbum();
             trackName = tag1.getTitle();
         }
         else if(mp3file.hasId3v2Tag()){
             ID3v2 tag2 = mp3file.getId3v2Tag();
-            genre = Integer.toString(tag2.getGenre());
+            genre = tag2.getGenreDescription();
             artistName = tag2.getArtist();
             albumInfo = tag2.getAlbum();
             trackName = tag2.getTitle();
