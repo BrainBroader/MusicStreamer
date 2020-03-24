@@ -1,15 +1,13 @@
+import com.mpatric.mp3agic.ID3v1;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.Mp3File;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//Mp3 extraction packages
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.mp3.Mp3Parser;
-import org.apache.tika.sax.BodyContentHandler;
-import org.xml.sax.SAXException;
 
 
 public class Mp3Parse {
@@ -18,7 +16,7 @@ public class Mp3Parse {
 
     }
 
-    public static MusicFile mp3extraction(String path) throws Exception, IOException, SAXException, TikaException {
+    public static MusicFile mp3extraction(String path) throws Exception, InvalidDataException {
 
         String trackName = null;
         String artistName = null;
@@ -26,41 +24,23 @@ public class Mp3Parse {
         String genre = null;
         byte[] musicFileExtract;
 
-        //detecting the file type
-        BodyContentHandler handler = new BodyContentHandler();
-        Metadata metadata = new Metadata();
-
-        File track = new File(path);
-        FileInputStream inputstream = new FileInputStream(track);
-        ParseContext pcontext = new ParseContext();
-
-        //Mp3 parser
-        Mp3Parser  Mp3Parser = new  Mp3Parser();
-        Mp3Parser.parse(inputstream, handler, metadata, pcontext);
-
-
         musicFileExtract = Files.readAllBytes(Paths.get(path));
 
-        String[] metadataNames = metadata.names();
-
-        for(String name : metadataNames) {
-            if(name.equals("xmpDM:genre")){
-                genre = metadata.get(name);
-            }
-            else if (name.equals("xmpDM:artist")){
-                artistName = metadata.get(name);
-            }
-            else if (name.equals("xmpDM:album")){
-                albumInfo =  metadata.get(name);
-            }
-            else if(name.equals("title")){
-                trackName =  metadata.get(name);
-            } else {
-                continue;
-            }
-
+        Mp3File mp3file = new Mp3File(path);
+        if(mp3file.hasId3v1Tag()){
+            ID3v1 tag1 = mp3file.getId3v1Tag();
+            genre = Integer.toString(tag1.getGenre());
+            artistName = tag1.getArtist();
+            albumInfo = tag1.getAlbum();
+            trackName = tag1.getTitle();
         }
-        inputstream.close();
+        else if(mp3file.hasId3v2Tag()){
+            ID3v2 tag2 = mp3file.getId3v2Tag();
+            genre = Integer.toString(tag2.getGenre());
+            artistName = tag2.getArtist();
+            albumInfo = tag2.getAlbum();
+            trackName = tag2.getTitle();
+        }
 
         //creating a musicfile object
         MusicFile song = new MusicFile(trackName,artistName,albumInfo,genre,musicFileExtract);
@@ -148,7 +128,7 @@ public class Mp3Parse {
             }
             stream.close();*/
 
-            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΑ\\dataset1\\Comedy\\A Surprising Encounter.mp3";
+            String filepath = "C:\\Users\\MrAG99\\IdeaProjects\\MusicStreamer\\dataset2\\Ancient Winds.mp3";
             MusicFile m = new MusicFile();
             m = mp3extraction(filepath);
             m.printTrack();
