@@ -1,57 +1,63 @@
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.*; 
+import java.text.*; 
+import java.util.*; 
+import java.net.*; 
+  
+// Server class 
+public class Broker
+{
+    private static ArrayList<ActionsForPub> publishers = new ArrayList<ActionsForPub>();
 
 
-public class Broker extends Node{
+    public void openServer(int PORT) throws IOException {
 
-    public List<Consumer> registeredUser;
-    public List<Publisher> registeredPublishers;
-
-    private static ArrayList<PubHandler> publishers = new ArrayList<>();
-    private static ExecutorService pool = Executors.newFixedThreadPool(2);
-
-    private static final int PORT = 9090;
-
-    public Broker() {
-
-    }
-
-    public void calculateKeys() {
-
-    }
-
-    public Publisher acceptConnection(Publisher p ) {
-        return null;
-    }
-
-    public Consumer acceptConnection(Consumer c) {
-        return null;
-    }
-
-    public void notifyPublisher(String s) {
-
-    }
-
-    public void pull(ArtistName a) {
-
+        // server is listening on port 5056 
+        ServerSocket ss = new ServerSocket(PORT);
+        System.out.println("Server started.");
+        System.out.println("Waiting for a Publisher connection...\n");
+          
+        // running infinite loop for getting 
+        // client request 
+        while (true)  
+        { 
+            Socket s = null; 
+              
+            try 
+            { 
+                // socket object to receive incoming client requests 
+                s = ss.accept(); 
+                  
+                System.out.println("A new publisher connected. : " + s);
+                  
+                // obtaining input and out streams 
+                DataInputStream dis = new DataInputStream(s.getInputStream()); 
+                DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+                  
+                System.out.println("Assigning new thread for this publisher.");
+  
+                // create a new thread object 
+                Thread t = new ActionsForPub(s, dis, dos);
+                publishers.add((ActionsForPub)t);
+                // Invoking the start() method 
+                t.start(); 
+                  
+            } 
+            catch (Exception e){ 
+                s.close(); 
+                e.printStackTrace(); 
+            } 
+        } 
     }
 
     public static void main(String[] args) throws IOException {
-        ServerSocket listener = new ServerSocket(PORT);
-        while (true) {
-            System.out.println("[BROKER] Waiting for publisher to connect...");
-            Socket pub =  listener.accept();
-            System.out.println("[BROKER] Connected to publisher");
 
-            PubHandler pubThread = new PubHandler(pub);
-            publishers.add(pubThread);
+        System.out.print("Enter Port: ");
+        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
+        String command = keyboard.readLine();
+        int PORT = Integer.parseInt(command);
+        System.out.println();
 
-            pool.execute(pubThread);
-        }
+        new Broker().openServer(PORT);
+
     }
-}
+} 

@@ -1,4 +1,4 @@
-public class Value {
+public class  Value {
 
     private MusicFile musicFile;
 
@@ -7,6 +7,7 @@ public class Value {
     }
 
     public Value(MusicFile musicFile) {
+
         this.musicFile = musicFile;
     }
 

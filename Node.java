@@ -1,24 +1,32 @@
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
 
-public class Node extends Thread {
+public class Node {
 
-    public List<Broker> brokers;
+    //List<Broker> brokers;
 
-    public Node() {
+
+    public Node(){
 
     }
 
-    public Node(List<Broker> brokers) {
+    /*public Node(List<Broker> brokers) {
+
         this.brokers = brokers;
-    }
+    }*/
 
     public void init(int i) {
 
     }
 
-    public List<Broker> getBrokers() {
+    /*public List<Broker> getBrokers() {
+
         return this.brokers;
-    }
+    }*/
+
+
 
     public void connect() {
 

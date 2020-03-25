@@ -108,27 +108,26 @@ public class Mp3Parse {
     {
 
         try {
-            /*ArrayList<MusicFile> array = new ArrayList<MusicFile>();
-            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΑ\\dataset1\\Comedy";
-
+            ArrayList<MusicFile> array = new ArrayList<MusicFile>();
+            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\MusicStreamer-spotify\\dataset2";
             Path dir = FileSystems.getDefault().getPath(filepath);
             DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
             for (Path path : stream) {
-
                 //System.out.println(path.getFileName());
                 String p = filepath + "/" +(path.getFileName()).toString();
                 MusicFile m = new MusicFile();
                 m = mp3extraction(p);
-                List<MusicFile> list = new ArrayList<MusicFile>();
-                list = chunks(m.getMusicFileExtract(), m);
-
+                m.printTrack();
+                //List<MusicFile> list = new ArrayList<MusicFile>();
+                //list = chunks(m.getMusicFileExtract(), m);
                 //createMP3(m, path.getFileName().toString());
-                //array.add(m);
-
+                array.add(m);
             }
-            stream.close();*/
+            stream.close();
 
-            String filepath = "C:\\Users\\MrAG99\\IdeaProjects\\MusicStreamer\\dataset2\\Ancient Winds.mp3";
+            System.out.println(array.size());
+
+            /*String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\MusicStreamer-spotify\\dataset2\\Ancient Winds.mp3";
             MusicFile m = new MusicFile();
             m = mp3extraction(filepath);
             m.printTrack();
@@ -143,7 +142,7 @@ public class Mp3Parse {
 
             System.out.println(list.size());
 
-            createMP3(m,"syme.mp3");
+            createMP3(m,"syme.mp3");*/
 
         } catch (Exception e) {
             e.printStackTrace();
