@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Node {
+public class Node extends Thread {
 
     public List<Broker> brokers;
 

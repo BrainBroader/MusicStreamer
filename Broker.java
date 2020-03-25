@@ -1,13 +1,21 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class Broker extends Node{
 
     public List<Consumer> registeredUser;
     public List<Publisher> registeredPublishers;
+
+    private static ArrayList<PubHandler> publishers = new ArrayList<>();
+    private static ExecutorService pool = Executors.newFixedThreadPool(2);
+
+    private static final int PORT = 9090;
 
     public Broker() {
 
@@ -33,46 +41,17 @@ public class Broker extends Node{
 
     }
 
+    public static void main(String[] args) throws IOException {
+        ServerSocket listener = new ServerSocket(PORT);
+        while (true) {
+            System.out.println("[BROKER] Waiting for publisher to connect...");
+            Socket pub =  listener.accept();
+            System.out.println("[BROKER] Connected to publisher");
 
+            PubHandler pubThread = new PubHandler(pub);
+            publishers.add(pubThread);
 
-
-
-
-
-
-
-
-
-    /*public static void main(String args[]) {
-        new Broker().openServer();
-    }
-
-    ServerSocket providerSocket;
-    Socket connection = null;
-
-    void openServer() {
-        try {
-
-            providerSocket = new ServerSocket(4321, 10);
-            System.out.println("Server started");
-            System.out.println("Waiting for a Publisher ...");
-
-            while (true) {
-                connection = providerSocket.accept();
-                System.out.println("Publisher connected.");
-                ActionForPubs add = new ActionForPubs(connection);
-                System.out.println("Handler created.");
-                new Thread(add).start();
-            }
-
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        } finally {
-            try {
-                providerSocket.close();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            pool.execute(pubThread);
         }
-    }*/
+    }
 }
