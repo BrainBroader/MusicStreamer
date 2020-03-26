@@ -3,7 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 
-public class Node {
+public class Node extends Thread {
 
     //List<Broker> brokers;
 

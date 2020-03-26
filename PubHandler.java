@@ -1,37 +1,76 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Scanner;
 
-public class PubHandler implements Runnable {
-    private Socket publisher;
-    private BufferedReader in;
-    private PrintWriter out;
+public class PubHandler extends Thread {
 
-    public PubHandler(Socket pubSocket) throws IOException {
-        publisher = pubSocket;
-        in = new BufferedReader(new InputStreamReader(publisher.getInputStream())); 
-        out = new PrintWriter(publisher.getOutputStream(), true);
-        
+    private String IP;
+    private int PORT;
+    //private MethodPubHadler mb;
+
+    public PubHandler(String IP, int PORT) {
+        this.IP = IP;
+        this.PORT = PORT;
     }
 
-    public void run() {
-        try {
-            while (true) {
-                String request = in.readLine();
-                out.println(request + "-READ");
+
+    @Override
+    public void run()
+    {
+        doyourJob();
+    }
+
+
+
+    public synchronized void doyourJob() {
+        try
+        {
+            Scanner scn = new Scanner(System.in);
+
+
+            // getting localhost ip
+            InetAddress ip = InetAddress.getByName(IP);
+
+            // establish the connection with server port 5056
+            Socket s = new Socket(ip, PORT);
+
+            // obtaining input and out streams
+            DataInputStream dis = new DataInputStream(s.getInputStream());
+            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+
+            // the following loop performs the exchange of
+            // information between client and client handler
+            while (true)
+            {
+                System.out.println(dis.readUTF());
+                String tosend = scn.nextLine();
+                dos.writeUTF(tosend);
+
+                // If client sends exit,close this connection
+                // and then break from the while loop
+                if(tosend.equals("Exit"))
+                {
+                    System.out.println("[SERVER] Closing this connection : " + s);
+                    s.close();
+                    System.out.println("[SERVER] Connection closed");
+                    break;
+                }
+
+                // printing date or time as requested by client
+                String received = dis.readUTF();
+                System.out.println(received);
             }
-        } catch (IOException e) {
+
+            // closing resources
+            //scn.close();
+            dis.close();
+            dos.close();
+        }catch(Exception e){
             e.printStackTrace();
-        } finally {
-            out.close();
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
-    
+
+
 }
