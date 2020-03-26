@@ -11,15 +11,17 @@ class ActionsForPub extends Thread
     DateFormat fortime = new SimpleDateFormat("hh:mm:ss"); 
     final DataInputStream dis; 
     final DataOutputStream dos; 
-    final Socket s; 
+    final Socket s;
+    private int PORT;
       
   
     // Constructor 
-    public ActionsForPub(Socket s, DataInputStream dis, DataOutputStream dos)
+    public ActionsForPub(Socket s, DataInputStream dis, DataOutputStream dos,int PORT)
     { 
         this.s = s; 
         this.dis = dis; 
-        this.dos = dos; 
+        this.dos = dos;
+        this.PORT = PORT;
     } 
   
     @Override
@@ -32,7 +34,7 @@ class ActionsForPub extends Thread
             try { 
   
                 // Ask user what he wants 
-                dos.writeUTF("[SERVER] What do you want?[Date | Time]..\n"+
+                dos.writeUTF("[SERVER "+ PORT +"] What do you want?[Date | Time]..\n"+
                             "Type Exit to terminate connection."); 
                   
                 // receive the answer from client 

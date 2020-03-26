@@ -52,9 +52,9 @@ public class PubHandler extends Thread {
                 // and then break from the while loop
                 if(tosend.equals("Exit"))
                 {
-                    System.out.println("[SERVER] Closing this connection : " + s);
+                    System.out.println("[SERVER "+PORT+"] Closing this connection : " + s);
                     s.close();
-                    System.out.println("[SERVER] Connection closed");
+                    System.out.println("[SERVER "+PORT+"] Connection closed");
                     break;
                 }
 
@@ -71,6 +71,8 @@ public class PubHandler extends Thread {
             e.printStackTrace();
         }
     }
+
+
 
 
 }
