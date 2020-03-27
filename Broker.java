@@ -1,5 +1,4 @@
-import java.io.*; 
-import java.text.*; 
+import java.io.*;
 import java.util.*; 
 import java.net.*; 
   
@@ -30,8 +29,8 @@ public class Broker
                 System.out.println("A new publisher connected. : " + s);
                   
                 // obtaining input and out streams 
-                DataInputStream dis = new DataInputStream(s.getInputStream()); 
-                DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+                DataInputStream dis = new DataInputStream(s.getInputStream());
+                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
                   
                 System.out.println("Assigning new thread for this publisher.");
   
@@ -73,18 +72,21 @@ public class Broker
 
 
             Scanner fileScanner = new Scanner(f);
-            fileScanner.nextLine();
+            String firstline = fileScanner.nextLine();
 
             FileWriter fileStream = new FileWriter("brokers2.txt");
             BufferedWriter out = new BufferedWriter(fileStream);
             while(fileScanner.hasNextLine()) {
                 String next = fileScanner.nextLine();
-                if(next.equals("\n"))
+                if(next.equals("\n")) {
                     out.newLine();
-                else
+
+                } else {
                     out.write(next);
-                out.newLine();
+                    out.newLine();
+                }
             }
+            out.write(firstline);
             out.close();
 
 
@@ -96,12 +98,6 @@ public class Broker
     }
 
     public static void main(String[] args) throws IOException {
-
-        /*System.out.print("Enter Port: ");
-        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
-        String command = keyboard.readLine();
-        int PORT = Integer.parseInt(command);
-        System.out.println();*/
 
         int PORT = loadPorts("brokers2.txt");
 

@@ -8,7 +8,6 @@ public class PubHandler extends Thread {
 
     private String IP;
     private int PORT;
-    //private MethodPubHadler mb;
 
     public PubHandler(String IP, int PORT) {
         this.IP = IP;
@@ -21,8 +20,6 @@ public class PubHandler extends Thread {
     {
         doyourJob();
     }
-
-
 
     public synchronized void doyourJob() {
         try
@@ -44,13 +41,13 @@ public class PubHandler extends Thread {
             // information between client and client handler
             while (true)
             {
-                System.out.println(dis.readUTF());
+                System.out.print(dis.readUTF());
                 String tosend = scn.nextLine();
                 dos.writeUTF(tosend);
 
                 // If client sends exit,close this connection
                 // and then break from the while loop
-                if(tosend.equals("Exit"))
+                if(tosend.equals("exit"))
                 {
                     System.out.println("[SERVER "+PORT+"] Closing this connection : " + s);
                     s.close();

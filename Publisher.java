@@ -12,36 +12,10 @@ public class Publisher extends Node
 
     public static void main(String[] args) throws IOException {
 
-
-        /*BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
-
-        String command = "";
-        System.out.print("How many brokers? : ");
-        command = keyboard.readLine();
-        Brokers = Integer.parseInt(command);
-        System.out.println();
-
-        for (int i = 0; i < brokers; i++) {
-            new Publisher().start();
-        }
-
-        System.out.print("Enter Port: ");
-
-        command = keyboard.readLine();
-        int PORT = Integer.parseInt(command);
-        System.out.println();
-
-        System.out.print("Enter IP: ");
-        command = keyboard.readLine();
-        String IP = "192.168.1.13";
-        System.out.println();*/
-
         try(final DatagramSocket socket = new DatagramSocket()){
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             IP = socket.getLocalAddress().getHostAddress();
         }
-
-
 
         Publisher pub = new Publisher();
         pub.connect();
