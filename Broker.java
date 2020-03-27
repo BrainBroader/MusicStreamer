@@ -6,6 +6,7 @@ import java.net.*;
 public class Broker
 {
     private static ArrayList<ActionsForPub> publishers = new ArrayList<ActionsForPub>();
+    private static ArrayList<ActionsForConsumer> consumers = new ArrayList<ActionsForConsumer>();
 
 
     public void openServer(int PORT) throws IOException {
@@ -13,7 +14,7 @@ public class Broker
         // server is listening on port 5056 
         ServerSocket ss = new ServerSocket(PORT);
         System.out.println("Server started.");
-        System.out.println("Waiting for a Publisher connection...\n");
+        System.out.println("Waiting for a connection...");
           
         // running infinite loop for getting 
         // client request 
@@ -22,23 +23,43 @@ public class Broker
             Socket s = null; 
               
             try 
-            { 
-                // socket object to receive incoming client requests 
-                s = ss.accept(); 
-                  
-                System.out.println("A new publisher connected. : " + s);
-                  
-                // obtaining input and out streams 
+            {
+                // socket object to receive incoming client requests
+                s = ss.accept();
+
+
+                // obtaining input and out streams
                 DataInputStream dis = new DataInputStream(s.getInputStream());
                 DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-                  
-                System.out.println("Assigning new thread for this publisher.");
-  
-                // create a new thread object 
-                Thread t = new ActionsForPub(s, dis, dos,PORT);
-                publishers.add((ActionsForPub)t);
-                // Invoking the start() method 
-                t.start(); 
+
+                String send = "Publisher or Consumer ? \n";
+                dos.writeUTF(send);
+
+                String received = dis.readUTF();
+
+                if (received.equals("Publisher")) {
+
+                    System.out.println("\nA new publisher connected. : " + s);
+                    System.out.println("Assigning new thread for this publisher.");
+
+                    // create a new thread object
+                    Thread t = new ActionsForPub(s, dis, dos, PORT);
+                    publishers.add((ActionsForPub) t);
+                    // Invoking the start() method
+                    t.start();
+
+                } else if (received.equals("Consumer")) {
+
+                    System.out.println("\nA new consumer connected. : " + s);
+                    System.out.println("Assigning new thread for this consumer.");
+
+                    // create a new thread object
+                    Thread t2 = new ActionsForConsumer(s, dis, dos, PORT);
+                    consumers.add((ActionsForConsumer) t2);
+                    // Invoking the start() method
+                    t2.start();
+
+                }
                   
             } 
             catch (Exception e){ 

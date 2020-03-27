@@ -1,26 +1,28 @@
-import java.io.*; 
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
-class ActionsForPub extends Thread
-{
+public class ActionsForConsumer extends Thread {
+
     final DataInputStream dis;
     final DataOutputStream dos;
     final Socket s;
     private int PORT;
-      
-  
-    // Constructor 
-    public ActionsForPub(Socket s, DataInputStream dis, DataOutputStream dos,int PORT)
-    { 
-        this.s = s; 
-        this.dis = dis; 
+
+    public ActionsForConsumer(Socket s, DataInputStream dis, DataOutputStream dos,int PORT)
+    {
+        this.s = s;
+        this.dis = dis;
         this.dos = dos;
         this.PORT = PORT;
-    } 
-  
+    }
+
+
     @Override
-    public void run() {
+    public void run()
+    {
         Scanner sc = new Scanner(System.in);
         String received;
         String toreturn;
@@ -32,10 +34,10 @@ class ActionsForPub extends Thread
 
                 // receive the answer from client
                 received = dis.readUTF();
-                System.out.println("[Publisher "+PORT+"] " + received);
+                System.out.println("[Consumer "+PORT+"] " + received);
 
                 if (received.equals("exit")) {
-                    System.out.println("Publisher " + this.s + " sends exit...");
+                    System.out.println("Consumer " + this.s + " sends exit...");
                     System.out.println("Closing this connection.");
                     this.s.close();
                     System.out.println("Connection closed");

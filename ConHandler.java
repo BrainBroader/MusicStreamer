@@ -4,16 +4,16 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class PubHandler extends Thread {
+public class ConHandler extends Thread {
 
     private String IP;
     private int PORT;
 
-    public PubHandler(String IP, int PORT) {
+    public ConHandler(String IP, int PORT) {
+
         this.IP = IP;
         this.PORT = PORT;
     }
-
 
     @Override
     public void run()
@@ -38,7 +38,7 @@ public class PubHandler extends Thread {
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
             dis.readUTF();
-            String p = "Publisher";
+            String p = "Consumer";
             dos.writeUTF(p);
 
             // the following loop performs the exchange of
@@ -72,8 +72,4 @@ public class PubHandler extends Thread {
             e.printStackTrace();
         }
     }
-
-
-
-
 }

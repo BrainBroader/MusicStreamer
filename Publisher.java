@@ -6,32 +6,41 @@ import java.util.Scanner;
 // Client class 
 public class Publisher extends Node
 {
-    private static ArrayList<Integer> brokers = new ArrayList<Integer>();
+    private static ArrayList<Integer> brokers_ports = new ArrayList<Integer>();
+    private static ArrayList<String> brokers_ip = new ArrayList<String>();
     private static String IP;
     //private static int Brokers;
 
     public static void main(String[] args) throws IOException {
 
-        try(final DatagramSocket socket = new DatagramSocket()){
+        /*try(final DatagramSocket socket = new DatagramSocket()){
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             IP = socket.getLocalAddress().getHostAddress();
-        }
+        }*/
 
         Publisher pub = new Publisher();
         pub.connect();
     }
 
     public void connect() {
-        brokers = loadPorts("brokers1.txt");
+        loadPorts("brokers1.txt");
 
-        for (int i = 0; i < brokers.size(); i++) {
-            PubHandler handler = new PubHandler(IP, brokers.get(i));
+        /*for(int j = 0; j < brokers_ip.size(); j++ ) {
+            System.out.println(brokers_ip.get(j));
+        }
+
+        for(int j = 0; j < brokers_ports.size(); j++ ) {
+            System.out.println(brokers_ports.get(j));
+        }*/
+
+        for (int i = 0; i < brokers_ip.size(); i++) {
+            PubHandler handler = new PubHandler(brokers_ip.get(i), brokers_ports.get(i));
             handler.start();
         }
     }
 
-    public static ArrayList<Integer> loadPorts(String data) {
-        ArrayList<Integer> array = new ArrayList<Integer>();
+    public static void loadPorts(String data) {
+        //ArrayList<Integer> array = new ArrayList<Integer>();
         File f = null;
         BufferedReader reader = null;
         String line;
@@ -51,14 +60,15 @@ public class Publisher extends Node
             while(line != null){
 
                 String[] splited = line.split("\\s+");
-                int port = Integer.parseInt(splited[0]);
-                array.add(port);
+                String ip = splited[0];
+                int port = Integer.parseInt(splited[1]);
+                brokers_ports.add(port);
+                brokers_ip.add(ip);
 
                 line = reader.readLine();
             }
         } catch (IOException e) {
             System.out.println("Error!!!");
         }
-        return array;
     }
 } 
