@@ -5,22 +5,18 @@ import java.util.Scanner;
 
 class ActionsForPub extends Thread
 {
-    ObjectInputStream dis;
-    ObjectOutputStream dos;
+    final ObjectInputStream dis;
+    final ObjectOutputStream dos;
     final Socket s;
     private int PORT;
       
   
     // Constructor 
-    public ActionsForPub(Socket s, int PORT)
+    public ActionsForPub(Socket s, ObjectInputStream dis, ObjectOutputStream dos,int PORT)
     { 
         this.s = s;
-        try {
-            ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
-            ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.dis = dis;
+        this.dos = dos;
         this.PORT = PORT;
     } 
   
@@ -29,6 +25,8 @@ class ActionsForPub extends Thread
 
         String received;
         String toreturn;
+
+
 
         try {
 

@@ -29,23 +29,25 @@ public class Broker extends Node {
 
 
                 // obtaining input and out streams
-                ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
                 ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
+                ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
 
-                /*String send = "Publisher or Consumer ? \n";
-                dos.writeUTF(send);
-                String received = (String)dis.readObject();*/
 
-                System.out.println("\nA new publisher connected. : " + s);
-                System.out.println("Assigning new thread for this publisher.");
 
-                // create a new thread object
-                Thread t = new ActionsForPub(s, PORT);
-                publishers.add((ActionsForPub) t);
-                // Invoking the start() method
-                t.start();
+                String received = (String)dis.readObject();
 
-                /*} else if (received.equals("Consumer")) {
+
+                if (received.equals("Publisher")) {
+                    System.out.println("\nA new publisher connected. : " + s);
+                    System.out.println("Assigning new thread for this publisher.");
+
+                    // create a new thread object
+                    Thread t = new ActionsForPub(s, dis, dos, PORT);
+                    publishers.add((ActionsForPub) t);
+                    // Invoking the start() method
+                    t.start();
+
+                } else if (received.equals("Consumer")) {
 
                     System.out.println("\nA new consumer connected. : " + s);
                     System.out.println("Assigning new thread for this consumer.");
@@ -56,7 +58,7 @@ public class Broker extends Node {
                     // Invoking the start() method
                     t2.start();
 
-                }*/
+                }
 
             } catch (Exception e) {
                 s.close();

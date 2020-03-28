@@ -36,12 +36,13 @@ public class PubHandler extends Thread {
             Socket s = new Socket(ip, PORT);
 
             // obtaining input and out streams
-            ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
             ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
+            ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
 
-            /*dis.readUTF();
+
+
             String p = "Publisher";
-            dos.writeObject(p);*/
+            dos.writeObject(p);
 
             dos.writeObject(pub.getArtitsList());
 
