@@ -1,17 +1,15 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class ActionsForConsumer extends Thread {
 
-    final DataInputStream dis;
-    final DataOutputStream dos;
+    final ObjectInputStream dis;
+    final ObjectOutputStream dos;
     final Socket s;
     private int PORT;
 
-    public ActionsForConsumer(Socket s, DataInputStream dis, DataOutputStream dos,int PORT)
+    public ActionsForConsumer(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT)
     {
         this.s = s;
         this.dis = dis;

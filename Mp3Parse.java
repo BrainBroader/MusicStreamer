@@ -108,7 +108,7 @@ public class Mp3Parse {
     {
 
         try {
-            ArrayList<MusicFile> array = new ArrayList<MusicFile>();
+           ArrayList<MusicFile> array = new ArrayList<MusicFile>();
             String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\MusicStreamer-spotify\\dataset2";
             Path dir = FileSystems.getDefault().getPath(filepath);
             DirectoryStream<Path> stream = Files.newDirectoryStream( dir );

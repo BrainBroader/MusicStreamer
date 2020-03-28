@@ -29,26 +29,23 @@ public class Broker extends Node {
 
 
                 // obtaining input and out streams
-                DataInputStream dis = new DataInputStream(s.getInputStream());
-                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+                ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
+                ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
 
-                String send = "Publisher or Consumer ? \n";
+                /*String send = "Publisher or Consumer ? \n";
                 dos.writeUTF(send);
+                String received = (String)dis.readObject();*/
 
-                String received = dis.readUTF();
+                System.out.println("\nA new publisher connected. : " + s);
+                System.out.println("Assigning new thread for this publisher.");
 
-                if (received.equals("Publisher")) {
+                // create a new thread object
+                Thread t = new ActionsForPub(s, PORT);
+                publishers.add((ActionsForPub) t);
+                // Invoking the start() method
+                t.start();
 
-                    System.out.println("\nA new publisher connected. : " + s);
-                    System.out.println("Assigning new thread for this publisher.");
-
-                    // create a new thread object
-                    Thread t = new ActionsForPub(s, dis, dos, PORT);
-                    publishers.add((ActionsForPub) t);
-                    // Invoking the start() method
-                    t.start();
-
-                } else if (received.equals("Consumer")) {
+                /*} else if (received.equals("Consumer")) {
 
                     System.out.println("\nA new consumer connected. : " + s);
                     System.out.println("Assigning new thread for this consumer.");
@@ -59,7 +56,7 @@ public class Broker extends Node {
                     // Invoking the start() method
                     t2.start();
 
-                }
+                }*/
 
             } catch (Exception e) {
                 s.close();
@@ -118,15 +115,6 @@ public class Broker extends Node {
         return port;
     }
 
-
-    public static void main(String[] args) throws IOException {
-
-        int PORT = loadPorts("brokers2.txt");
-
-        new Broker().openServer(PORT);
-
-    }
-
     //getting the ip of the broker
     public String getIP() throws IOException {
         try (final DatagramSocket socket = new DatagramSocket()) {
@@ -137,4 +125,11 @@ public class Broker extends Node {
     }
 
 
+    public static void main(String[] args) throws IOException {
+
+        int PORT = loadPorts("brokers2.txt");
+
+        new Broker().openServer(PORT);
+
+    }
 }

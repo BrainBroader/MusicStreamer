@@ -1,30 +1,63 @@
 import java.io.*; 
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 class ActionsForPub extends Thread
 {
-    final DataInputStream dis;
-    final DataOutputStream dos;
+    ObjectInputStream dis;
+    ObjectOutputStream dos;
     final Socket s;
     private int PORT;
       
   
     // Constructor 
-    public ActionsForPub(Socket s, DataInputStream dis, DataOutputStream dos,int PORT)
+    public ActionsForPub(Socket s, int PORT)
     { 
-        this.s = s; 
-        this.dis = dis; 
-        this.dos = dos;
+        this.s = s;
+        try {
+            ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
+            ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.PORT = PORT;
     } 
   
     @Override
     public void run() {
-        Scanner sc = new Scanner(System.in);
+
         String received;
         String toreturn;
-        while (true) {
+
+        try {
+
+             ArrayList<String> artists = new ArrayList<>();
+             artists = (ArrayList<String>) dis.readObject();
+
+             for (int i = 0; i < artists.size(); i++) {
+                 System.out.println(artists.get(i));
+             }
+
+
+
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+
+        /*while (true) {
             try {
 
                 // Ask user what he wants
@@ -51,6 +84,6 @@ class ActionsForPub extends Thread
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 }

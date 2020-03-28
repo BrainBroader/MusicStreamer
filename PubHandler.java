@@ -1,5 +1,7 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
@@ -8,24 +10,24 @@ public class PubHandler extends Thread {
 
     private String IP;
     private int PORT;
+    private Publisher pub;
 
-    public PubHandler(String IP, int PORT) {
+    public PubHandler(String IP, int PORT, Publisher pub) {
         this.IP = IP;
         this.PORT = PORT;
+        this.pub = pub;
     }
 
 
     @Override
     public void run()
     {
-        doyourJob();
+        push();
     }
 
-    public synchronized void doyourJob() {
+    public synchronized void push() {
         try
         {
-            Scanner scn = new Scanner(System.in);
-
 
             // getting localhost ip
             InetAddress ip = InetAddress.getByName(IP);
@@ -34,14 +36,19 @@ public class PubHandler extends Thread {
             Socket s = new Socket(ip, PORT);
 
             // obtaining input and out streams
-            DataInputStream dis = new DataInputStream(s.getInputStream());
-            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+            ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
+            ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
 
-            dis.readUTF();
+            /*dis.readUTF();
             String p = "Publisher";
-            dos.writeUTF(p);
+            dos.writeObject(p);*/
 
-            // the following loop performs the exchange of
+            dos.writeObject(pub.getArtitsList());
+
+
+
+
+            /*// the following loop performs the exchange of
             // information between client and client handler
             while (true)
             {
@@ -65,7 +72,7 @@ public class PubHandler extends Thread {
             }
 
             // closing resources
-            //scn.close();
+            //scn.close();*/
             dis.close();
             dos.close();
         }catch(Exception e){
