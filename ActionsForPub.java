@@ -9,15 +9,17 @@ class ActionsForPub extends Thread
     final ObjectOutputStream dos;
     final Socket s;
     private int PORT;
+    private Broker b;
       
   
     // Constructor 
-    public ActionsForPub(Socket s, ObjectInputStream dis, ObjectOutputStream dos,int PORT)
+    public ActionsForPub(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT, Broker b)
     { 
         this.s = s;
         this.dis = dis;
         this.dos = dos;
         this.PORT = PORT;
+        this.b = b;
     } 
   
     @Override
@@ -32,10 +34,31 @@ class ActionsForPub extends Thread
 
              ArrayList<String> artists = new ArrayList<>();
              artists = (ArrayList<String>) dis.readObject();
+             b.setArtists(artists);
 
-             for (int i = 0; i < artists.size(); i++) {
-                 System.out.println(artists.get(i));
+             for (int i = 0; i < b.getArtists().size(); i++) {
+                 System.out.println(b.getArtists().get(i));
              }
+
+             ArrayList<String> ips = new ArrayList<>();
+             ips = (ArrayList<String>) dis.readObject();
+             b.setBrokers_ip(ips);
+
+             for (int i = 0; i < b.getBrokers_ip().size(); i++) {
+                 System.out.println(b.getBrokers_ip().get(i));
+             }
+
+            ArrayList<Integer> ports = new ArrayList<>();
+            ports = (ArrayList<Integer>) dis.readObject();
+            b.setBrokers_ports(ports);
+
+            for (int i = 0; i < b.getBrokers_ports().size(); i++) {
+                System.out.println(b.getBrokers_ports().get(i));
+            }
+
+
+
+
 
 
 

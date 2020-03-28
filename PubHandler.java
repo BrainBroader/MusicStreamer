@@ -45,6 +45,8 @@ public class PubHandler extends Thread {
             dos.writeObject(p);
 
             dos.writeObject(pub.getArtitsList());
+            dos.writeObject(pub.getBrokers_ip());
+            dos.writeObject(pub.getBrokers_ports());
 
 
 
