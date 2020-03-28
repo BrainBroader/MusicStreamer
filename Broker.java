@@ -1,29 +1,29 @@
 import java.io.*;
-import java.util.*; 
-import java.net.*; 
-  
-// Server class 
-public class Broker
-{
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.net.*;
+
+// Server class
+public class Broker extends Node {
     private static ArrayList<ActionsForPub> publishers = new ArrayList<ActionsForPub>();
     private static ArrayList<ActionsForConsumer> consumers = new ArrayList<ActionsForConsumer>();
 
 
     public void openServer(int PORT) throws IOException {
 
-        // server is listening on port 5056 
+        // server is listening on port 5056
         ServerSocket ss = new ServerSocket(PORT);
         System.out.println("Server started.");
         System.out.println("Waiting for a connection...");
-          
-        // running infinite loop for getting 
-        // client request 
-        while (true)  
-        { 
-            Socket s = null; 
-              
-            try 
-            {
+
+        // running infinite loop for getting
+        // client request
+        while (true) {
+            Socket s = null;
+
+            try {
                 // socket object to receive incoming client requests
                 s = ss.accept();
 
@@ -60,13 +60,12 @@ public class Broker
                     t2.start();
 
                 }
-                  
-            } 
-            catch (Exception e){ 
-                s.close(); 
-                e.printStackTrace(); 
-            } 
-        } 
+
+            } catch (Exception e) {
+                s.close();
+                e.printStackTrace();
+            }
+        }
     }
 
     public static int loadPorts(String data) {
@@ -80,12 +79,14 @@ public class Broker
         } catch (NullPointerException e) {
             System.err.println("File not found.");
 
-        } try {
+        }
+        try {
             reader = new BufferedReader(new FileReader(f));
         } catch (FileNotFoundException e) {
             System.err.println("Error opening file!");
 
-        } try {
+        }
+        try {
             line = reader.readLine();
 
             String[] splited = line.split("\\s+");
@@ -97,9 +98,9 @@ public class Broker
 
             FileWriter fileStream = new FileWriter("brokers2.txt");
             BufferedWriter out = new BufferedWriter(fileStream);
-            while(fileScanner.hasNextLine()) {
+            while (fileScanner.hasNextLine()) {
                 String next = fileScanner.nextLine();
-                if(next.equals("\n")) {
+                if (next.equals("\n")) {
                     out.newLine();
 
                 } else {
@@ -111,12 +112,12 @@ public class Broker
             out.close();
 
 
-
         } catch (IOException e) {
             System.out.println("Error!!!");
         }
         return port;
     }
+
 
     public static void main(String[] args) throws IOException {
 
@@ -125,4 +126,15 @@ public class Broker
         new Broker().openServer(PORT);
 
     }
-} 
+
+    //getting the ip of the broker
+    public String getIP() throws IOException {
+        try (final DatagramSocket socket = new DatagramSocket()) {
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            String IP = socket.getLocalAddress().getHostAddress();
+            return IP;
+        }
+    }
+
+
+}

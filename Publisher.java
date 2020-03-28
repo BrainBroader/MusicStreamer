@@ -1,5 +1,8 @@
-import java.io.*; 
+import java.io.*;
+import java.math.BigInteger;
 import java.net.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Scanner;
   
@@ -8,6 +11,7 @@ public class Publisher extends Node
 {
     private static ArrayList<Integer> brokers_ports = new ArrayList<Integer>();
     private static ArrayList<String> brokers_ip = new ArrayList<String>();
+    private ArrayList<MusicFile> SongList = new ArrayList<MusicFile>();
     private static String IP;
     //private static int Brokers;
 
@@ -71,4 +75,97 @@ public class Publisher extends Node
             System.out.println("Error!!!");
         }
     }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Creates an artistName list
+    ArrayList<ArtistName> ArtistList = new ArrayList<>();
+    public void FindArtists (String name) {
+        boolean flag = true;
+        for (int i = 0; i < ArtistList.size(); i++) {
+            if (name.equals(ArtistList.get(i))) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            ArtistName hexName = new ArtistName(name);
+            ArtistList.add(hexName);
+        }
+    }
+
+    ArrayList<BigInteger> Ipp = new ArrayList<>();
+    //Hashing the artist name and return a Broker instance
+    public Broker HashTopic(ArtistName name){
+        BigInteger hexName = MD5(name.getName());
+        for(int i=0;i < brokers_ip.size();i++){
+            Ipp.add(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))));
+        }
+        Broker Br = FindBroker(hexName);
+        return Br;
+
+    }
+
+    //Finds in which Broker this
+    public Broker FindBroker(BigInteger hexName) {
+        if (Ipp.size() > 0) {
+            if (hexName.compareTo(Ipp.get(0)) < 0) {
+                //this needs to create a thread of broker 1
+                Broker br1 = new Broker();
+                return br1;
+            } else if (hexName.compareTo(Ipp.get(1)) < 0) {
+                //this needs to create a thread of broker 2
+                Broker br2 = new Broker();
+                return br2;
+            } else if (hexName.compareTo(Ipp.get(2)) < 0) {
+                //this needs to create a thread of broker 3
+                Broker br3 = new Broker();
+                return br3;
+            } else {
+                BigInteger val = hexName.mod(Ipp.get(2));
+                if (val.compareTo(Ipp.get(0)) < 0) {
+                    //this needs to create a thread of broker 1
+                    Broker br1 = new Broker();
+                    return br1;
+                } else if (val.compareTo(Ipp.get(1)) < 0) {
+                    //this needs to create a thread of broker 2
+                    Broker br2 = new Broker();
+                    return br2;
+                } else {
+                    //this needs to create a thread of broker 3
+                    Broker br3 = new Broker();
+                    return br3;
+
+
+                }
+
+            }
+        }else return null;
+
+    }
+
+
+
+    //hash Algorithm
+    public static BigInteger MD5(String input)
+    {
+        try {
+
+            // Static getInstance method is called with hashing MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // digest() method is called to calculate message digest
+            //  of an input digest() return array of byte
+            byte[] messageDigest = md.digest(input.getBytes());
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            return no;
+        }
+
+        // For specifying wrong message digest algorithms
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 } 
