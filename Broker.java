@@ -131,52 +131,39 @@ public class Broker extends Node {
     }
 
     //Hashing the artist name and return a Broker instance
-    public Broker hashTopic(String name) {
+    public int hashTopic(String name) {
         BigInteger hexName = MD5(name);
         for(int i=0;i < brokers_ip.size();i++){
             Ipp.add(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))));
         }
-        Broker Br = findBroker(hexName);
+        int Br = findBroker(hexName);
         return Br;
 
     }
 
+
+
     //Finds in which Broker this
-    public Broker findBroker(BigInteger hexName) {
+    public int findBroker(BigInteger hexName) {
         if (Ipp.size() > 0) {
             if (hexName.compareTo(Ipp.get(0)) < 0) {
-                //this needs to create a thread of broker 1
-                Broker br1 = new Broker();
-                return br1;
+                return 1;
             } else if (hexName.compareTo(Ipp.get(1)) < 0) {
-                //this needs to create a thread of broker 2
-                Broker br2 = new Broker();
-                return br2;
+                return 2;
             } else if (hexName.compareTo(Ipp.get(2)) < 0) {
-                //this needs to create a thread of broker 3
-                Broker br3 = new Broker();
-                return br3;
+                return 3;
             } else {
                 BigInteger val = hexName.mod(Ipp.get(2));
                 if (val.compareTo(Ipp.get(0)) < 0) {
-                    //this needs to create a thread of broker 1
-                    Broker br1 = new Broker();
-                    return br1;
+                    return 1;
                 } else if (val.compareTo(Ipp.get(1)) < 0) {
-                    //this needs to create a thread of broker 2
-                    Broker br2 = new Broker();
-                    return br2;
+                    return 2;
                 } else {
-                    //this needs to create a thread of broker 3
-                    Broker br3 = new Broker();
-                    return br3;
-
-
+                    return 3;
                 }
-
             }
         } else {
-            return null;
+            return 0;
         }
 
     }

@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
   
@@ -24,7 +25,7 @@ public class Publisher extends Node
     public static void main(String[] args) throws Exception {
 
         ArrayList<MusicFile> array = new ArrayList<MusicFile>();
-        String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\ΕΡΓΑΣΙΕΣ\\MusicStreamer\\dataset1\\Comedy";
+        String filepath = "C:\\Users\\MrAG99\\IdeaProjects\\MusicStreamer\\dataset2";
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {
@@ -118,25 +119,14 @@ public class Publisher extends Node
     }
 
 
-    /*public void findArtists (String name) {
-        boolean flag = true;
-        for (int i = 0; i < artistList.size(); i++) {
-            if (name.equals(artistList.get(i))) {
-                flag = false;
-                break;
-            }
-        }
-        if (flag) {
-            ArtistName hexName = new ArtistName(name);
-            artistList.add(hexName);
-        }
-    }*/
 
+
+    HashMap<Integer,String> ArtistComp = new HashMap<>();
 
     //Hashing the artist name and return a Broker instance
-    public Broker hashTopic(String name) {
+    public void hashTopic(String name) {
         Broker b = new Broker();
-        return b.hashTopic(name);
+        ArtistComp.put(b.hashTopic(name),name);
     }
 
 
