@@ -121,12 +121,12 @@ public class Publisher extends Node
 
 
 
-    HashMap<Integer,String> ArtistComp = new HashMap<>();
+    HashMap<String,Integer> ArtistComp = new HashMap<>();
 
     //Hashing the artist name and return a Broker instance
     public void hashTopic(String name) {
         Broker b = new Broker();
-        ArtistComp.put(b.hashTopic(name),name);
+        ArtistComp.put(name,b.hashTopic(name));
     }
 
 
