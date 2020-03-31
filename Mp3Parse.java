@@ -34,12 +34,13 @@ public class Mp3Parse {
             albumInfo = tag1.getAlbum();
             trackName = tag1.getTitle();
         }
-        else if(mp3file.hasId3v2Tag()){
+
+        if(mp3file.hasId3v2Tag()){
             ID3v2 tag2 = mp3file.getId3v2Tag();
-            genre = tag2.getGenreDescription();
             artistName = tag2.getArtist();
-            albumInfo = tag2.getAlbum();
             trackName = tag2.getTitle();
+            albumInfo = tag2.getAlbum();
+            genre = tag2.getGenreDescription();
         }
 
         //creating a musicfile object
@@ -109,13 +110,14 @@ public class Mp3Parse {
 
         try {
            ArrayList<MusicFile> array = new ArrayList<MusicFile>();
-            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\MusicStreamer-spotify\\dataset2";
+            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset1\\Comedy";
             Path dir = FileSystems.getDefault().getPath(filepath);
             DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
             for (Path path : stream) {
                 //System.out.println(path.getFileName());
                 String p = filepath + "/" +(path.getFileName()).toString();
                 MusicFile m = new MusicFile();
+                System.out.println(path.getFileName());
                 m = mp3extraction(p);
                 m.printTrack();
                 //List<MusicFile> list = new ArrayList<MusicFile>();
@@ -127,12 +129,12 @@ public class Mp3Parse {
 
             System.out.println(array.size());
 
-            /*String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\MusicStreamer-spotify\\dataset2\\Ancient Winds.mp3";
+            /*String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset2\\Adventure.mp3";
             MusicFile m = new MusicFile();
             m = mp3extraction(filepath);
             m.printTrack();
 
-            List<MusicFile> list = new ArrayList<MusicFile>();
+            /*List<MusicFile> list = new ArrayList<MusicFile>();
             list = chunks(m.getMusicFileExtract(),m);
 
             for (int i = 0; i < list.size(); i++) {
@@ -140,9 +142,9 @@ public class Mp3Parse {
             }
 
 
-            System.out.println(list.size());
+            //System.out.println(list.size());
 
-            createMP3(m,"syme.mp3");*/
+            //createMP3(m,"syme.mp3");*/
 
         } catch (Exception e) {
             e.printStackTrace();

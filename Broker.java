@@ -7,12 +7,16 @@ import java.net.*;
 
 // Server class
 public class Broker extends Node {
+
+    private static int port;
+    private static BigInteger iportName;
     private static ArrayList<ActionsForPub> publishers = new ArrayList<ActionsForPub>();
     private static ArrayList<ActionsForConsumer> consumers = new ArrayList<ActionsForConsumer>();
     private static ArrayList<Integer> brokers_ports = new ArrayList<Integer>();
     private static ArrayList<String> brokers_ip = new ArrayList<String>();
     private static ArrayList<String> artists = new ArrayList<String>();
     private static ArrayList<BigInteger> Ipp = new ArrayList<>();
+    private static ArrayList<BigInteger> h_artists = new ArrayList<>();
 
 
     public void openServer(int PORT) throws IOException {
@@ -130,42 +134,71 @@ public class Broker extends Node {
         }
     }
 
-    //Hashing the artist name and return a Broker instance
-    public int hashTopic(String name) {
-        BigInteger hexName = MD5(name);
-        for(int i=0;i < brokers_ip.size();i++){
-            Ipp.add(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))));
-        }
-        int Br = findBroker(hexName);
-        return Br;
+    HashMap<BigInteger, String> hash_ip = new HashMap<>();
+    HashMap<BigInteger, String> hash_art = new HashMap<>();
+    HashMap<String, String> brokers_list = new HashMap<>();
 
+    public void beginHash() throws IOException {
+
+        iportName = MD5(getIP() + Integer.toString(port));
+
+        for (int i=0;i < brokers_ip.size();i++) {
+            Ipp.add(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))));
+            hash_ip.put(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))), brokers_ip.get(i) + Integer.toString(brokers_ports.get(i)));
+        }
+
+        Collections.sort(Ipp);
+
+        for (int j=0; j < artists.size(); j++) {
+            h_artists.add(MD5(artists.get(j)));
+            hash_art.put(MD5(artists.get(j)), artists.get(j));
+        }
+
+        Collections.sort(h_artists);
+
+
+
+        for (int i = 0; i < h_artists.size(); i++) {
+            BigInteger broker = findBroker(h_artists.get(i));
+
+            String artist = hash_art.get(h_artists.get(i));
+            String br = hash_ip.get(broker);
+
+            brokers_list.put(artist, br);
+        }
+        System.out.println(brokers_list);
     }
 
 
 
+
+
     //Finds in which Broker this
-    public int findBroker(BigInteger hexName) {
-        if (Ipp.size() > 0) {
-            if (hexName.compareTo(Ipp.get(0)) < 0) {
-                return 1;
-            } else if (hexName.compareTo(Ipp.get(1)) < 0) {
-                return 2;
-            } else if (hexName.compareTo(Ipp.get(2)) < 0) {
-                return 3;
+    public BigInteger findBroker(BigInteger artist) {
+
+        BigInteger big = BigInteger.valueOf(0);
+
+
+        for (int j = (Ipp.size() - 1); j >= 0; j--) {
+            if ((j == (Ipp.size() - 1)) && (artist.compareTo(Ipp.get(j)) > 0)) {
+                 artist = artist.mod(Ipp.get(j));
+                 System.out.println("la la");
+            }
+
+            if (j != 0) {
+                if ((artist.compareTo(Ipp.get(j)) < 0) && (artist.compareTo(Ipp.get(j - 1)) > 0)) {
+                    big = Ipp.get(j);
+                    return big;
+                }
             } else {
-                BigInteger val = hexName.mod(Ipp.get(2));
-                if (val.compareTo(Ipp.get(0)) < 0) {
-                    return 1;
-                } else if (val.compareTo(Ipp.get(1)) < 0) {
-                    return 2;
-                } else {
-                    return 3;
+                if (artist.compareTo(Ipp.get(j)) < 0) {
+                    big = Ipp.get(j);
+                    return big;
                 }
             }
-        } else {
-            return 0;
-        }
 
+        }
+        return big;
     }
 
     //hash Algorithm
@@ -216,12 +249,20 @@ public class Broker extends Node {
         return this.artists;
     }
 
+    public int getPort() {
+        return this.port;
+    }
+
+    public ArrayList<BigInteger> getIpp() {
+        return this.Ipp;
+    }
+
 
     public static void main(String[] args) throws IOException {
 
-        int PORT = loadPorts("brokers2.txt");
+        port = loadPorts("brokers2.txt");
 
-        new Broker().openServer(PORT);
+        new Broker().openServer(port);
 
     }
 }

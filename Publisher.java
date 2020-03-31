@@ -25,7 +25,7 @@ public class Publisher extends Node
     public static void main(String[] args) throws Exception {
 
         ArrayList<MusicFile> array = new ArrayList<MusicFile>();
-        String filepath = "C:\\Users\\MrAG99\\IdeaProjects\\MusicStreamer\\dataset2";
+        String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset2";
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {
@@ -36,6 +36,7 @@ public class Publisher extends Node
             m = parse.mp3extraction(p);
             array.add(m);
             addArtist(m.getArtistName());
+            System.out.println(path.getFileName()+" :"+m.getArtistName());
 
             /*List<MusicFile> list = new ArrayList<MusicFile>();
             list = parse.chunks(m.getMusicFileExtract(), m);
@@ -101,7 +102,6 @@ public class Publisher extends Node
         if (!artists.contains(artist)) {
             if (artist != null) {
                 artists.add(artist);
-                System.out.println(artist);
             }
         }
     }
@@ -126,7 +126,7 @@ public class Publisher extends Node
     //Hashing the artist name and return a Broker instance
     public void hashTopic(String name) {
         Broker b = new Broker();
-        ArtistComp.put(name,b.hashTopic(name));
+        //ArtistComp.put(name,b.hashTopic(name));
     }
 
 

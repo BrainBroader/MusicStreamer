@@ -32,29 +32,30 @@ class ActionsForPub extends Thread
 
         try {
 
-             ArrayList<String> artists = new ArrayList<>();
-             artists = (ArrayList<String>) dis.readObject();
-             b.setArtists(artists);
+            ArrayList<String> artists = new ArrayList<>();
+            artists = (ArrayList<String>) dis.readObject();
+            b.setArtists(artists);
 
-             for (int i = 0; i < b.getArtists().size(); i++) {
-                 System.out.println(b.getArtists().get(i));
-             }
+            for (int i = 0; i < b.getArtists().size(); i++) {
+                System.out.println(b.getArtists().get(i));
+            }
 
-             ArrayList<String> ips = new ArrayList<>();
-             ips = (ArrayList<String>) dis.readObject();
-             b.setBrokers_ip(ips);
-
-             for (int i = 0; i < b.getBrokers_ip().size(); i++) {
-                 System.out.println(b.getBrokers_ip().get(i));
-             }
+            ArrayList<String> ips = new ArrayList<>();
+            ips = (ArrayList<String>) dis.readObject();
+            b.setBrokers_ip(ips);
 
             ArrayList<Integer> ports = new ArrayList<>();
             ports = (ArrayList<Integer>) dis.readObject();
             b.setBrokers_ports(ports);
 
-            for (int i = 0; i < b.getBrokers_ports().size(); i++) {
-                System.out.println(b.getBrokers_ports().get(i));
+            for (int i = 0; i < b.getBrokers_ip().size(); i++) {
+                System.out.println(b.getBrokers_ip().get(i) +" "+ b.getBrokers_ports().get(i));
             }
+
+            b.beginHash();
+
+
+            //b.getIpp();
 
 
 
