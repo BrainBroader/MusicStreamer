@@ -15,17 +15,18 @@ import java.util.Scanner;
 // Client class 
 public class Publisher extends Node
 {
-    private static ArrayList<Integer> brokers_ports = new ArrayList<Integer>();
-    private static ArrayList<String> brokers_ip = new ArrayList<String>();
-    private static ArrayList<String> artists = new ArrayList<String>();
+    private static ArrayList<Integer> brokers_ports = new ArrayList<>();
+    private static ArrayList<String> brokers_ip = new ArrayList<>();
+    private static ArrayList<String> artists = new ArrayList<>();
     private static ArrayList<List<MusicFile>> songs = new ArrayList<>();
+    private static HashMap<String, String> broker_list = new HashMap<>();
     private static String IP;
     //private static int Brokers;
 
     public static void main(String[] args) throws Exception {
 
         ArrayList<MusicFile> array = new ArrayList<MusicFile>();
-        String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset2";
+        String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset1\\Comedy";
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {
@@ -36,7 +37,7 @@ public class Publisher extends Node
             m = parse.mp3extraction(p);
             array.add(m);
             addArtist(m.getArtistName());
-            System.out.println(path.getFileName()+" :"+m.getArtistName());
+            //System.out.println(path.getFileName()+" :"+m.getArtistName());
 
             /*List<MusicFile> list = new ArrayList<MusicFile>();
             list = parse.chunks(m.getMusicFileExtract(), m);
@@ -118,18 +119,8 @@ public class Publisher extends Node
         return this.brokers_ports;
     }
 
-
-
-
-    HashMap<String,Integer> ArtistComp = new HashMap<>();
-
-    //Hashing the artist name and return a Broker instance
-    public void hashTopic(String name) {
-        Broker b = new Broker();
-        //ArtistComp.put(name,b.hashTopic(name));
+    public void setBroker_list(HashMap<String, String> broker_list) {
+        this.broker_list = broker_list;
     }
-
-
-
 
 } 

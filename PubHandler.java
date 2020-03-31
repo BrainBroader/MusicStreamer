@@ -1,10 +1,8 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.HashMap;
 
 public class PubHandler extends Thread {
 
@@ -48,34 +46,22 @@ public class PubHandler extends Thread {
             dos.writeObject(pub.getBrokers_ip());
             dos.writeObject(pub.getBrokers_ports());
 
+            HashMap<String, String> bl = new HashMap<>();
+            bl = (HashMap<String, String>) dis.readObject();
+            pub.setBroker_list(bl);
 
+            System.out.println(bl);
 
-
-            /*// the following loop performs the exchange of
-            // information between client and client handler
-            while (true)
-            {
-                System.out.print(dis.readUTF());
-                String tosend = scn.nextLine();
-                dos.writeUTF(tosend);
-
-                // If client sends exit,close this connection
-                // and then break from the while loop
-                if(tosend.equals("exit"))
-                {
-                    System.out.println("[SERVER "+PORT+"] Closing this connection : " + s);
-                    s.close();
-                    System.out.println("[SERVER "+PORT+"] Connection closed");
+            while (true) {
+                if (p.equals("exit")) {
                     break;
                 }
-
-                // printing date or time as requested by client
-                String received = dis.readUTF();
-                System.out.println(received);
             }
 
+
+
+
             // closing resources
-            //scn.close();*/
             dis.close();
             dos.close();
         }catch(Exception e){

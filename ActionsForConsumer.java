@@ -8,49 +8,80 @@ public class ActionsForConsumer extends Thread {
     final ObjectOutputStream dos;
     final Socket s;
     private int PORT;
+    private Broker b;
+    private static String r;
 
-    public ActionsForConsumer(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT)
+    public ActionsForConsumer(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT, Broker b)
     {
         this.s = s;
         this.dis = dis;
         this.dos = dos;
         this.PORT = PORT;
+        this.b = b;
+        this.r = "no";
+    }
+
+    public ActionsForConsumer(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT, Broker b, String r)
+    {
+        this.s = s;
+        this.dis = dis;
+        this.dos = dos;
+        this.PORT = PORT;
+        this.b = b;
+        this.r = r;
     }
 
 
     @Override
     public void run()
     {
-        Scanner sc = new Scanner(System.in);
+        if (r.equals("reconnect")) {
+            stream_reconnect();
+        } else {
+            stream();
+        }
+
+    }
+
+
+    public synchronized void stream() {
+
         String received;
         String toreturn;
-        while (true) {
-            try {
 
-                // Ask user what he wants
-                dos.writeUTF("> ");
+        try {
 
-                // receive the answer from client
-                received = dis.readUTF();
-                System.out.println("[Consumer "+PORT+"] " + received);
+            dos.writeObject(b.getBrokers_list());
+            dos.writeObject(b.getArtists());
 
-                if (received.equals("exit")) {
-                    System.out.println("Consumer " + this.s + " sends exit...");
-                    System.out.println("Closing this connection.");
-                    this.s.close();
-                    System.out.println("Connection closed");
-                    break;
-                }
+            String exit = (String) dis.readObject();
 
-                toreturn = sc.nextLine();
-                toreturn = "[SERVER "+PORT+"] " + toreturn;
-                //System.out.println(toreturn);
-                dos.writeUTF(toreturn);
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(exit.equals("no")) {
+                stream_reconnect();
+                System.out.println("nai nai nai");
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
+
+    public synchronized void stream_reconnect() {
+
+        String received;
+        String toreturn;
+
+        try {
+
+            dos.writeObject("I am here");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }

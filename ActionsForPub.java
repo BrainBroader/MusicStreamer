@@ -25,6 +25,11 @@ class ActionsForPub extends Thread
     @Override
     public void run() {
 
+        push_response();
+    }
+
+    public synchronized void push_response() {
+
         String received;
         String toreturn;
 
@@ -54,16 +59,12 @@ class ActionsForPub extends Thread
 
             b.beginHash();
 
+            dos.writeObject(b.getBrokers_list());
+
+
+
 
             //b.getIpp();
-
-
-
-
-
-
-
-
 
 
         } catch (IOException e) {
@@ -71,41 +72,5 @@ class ActionsForPub extends Thread
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-
-
-
-
-
-
-
-        /*while (true) {
-            try {
-
-                // Ask user what he wants
-                dos.writeUTF("> ");
-
-                // receive the answer from client
-                received = dis.readUTF();
-                System.out.println("[Publisher "+PORT+"] " + received);
-
-                if (received.equals("exit")) {
-                    System.out.println("Publisher " + this.s + " sends exit...");
-                    System.out.println("Closing this connection.");
-                    this.s.close();
-                    System.out.println("Connection closed");
-                    break;
-                }
-
-                toreturn = sc.nextLine();
-                toreturn = "[SERVER "+PORT+"] " + toreturn;
-                //System.out.println(toreturn);
-                dos.writeUTF(toreturn);
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
     }
 }

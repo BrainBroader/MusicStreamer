@@ -1,18 +1,24 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class ConHandler extends Thread {
 
     private String IP;
     private int PORT;
+    private Consumer consumer;
 
-    public ConHandler(String IP, int PORT) {
+    public ConHandler(String IP, int PORT, Consumer consumer) {
 
         this.IP = IP;
         this.PORT = PORT;
+        this.consumer = consumer;
     }
 
     @Override
@@ -24,48 +30,70 @@ public class ConHandler extends Thread {
     public synchronized void doyourJob() {
         try
         {
-            Scanner scn = new Scanner(System.in);
-
-
-            // getting localhost ip
             InetAddress ip = InetAddress.getByName(IP);
 
-            // establish the connection with server port 5056
             Socket s = new Socket(ip, PORT);
 
-            // obtaining input and out streams
-            DataInputStream dis = new DataInputStream(s.getInputStream());
-            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+            ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
+            ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
 
-            dis.readUTF();
+
             String p = "Consumer";
-            dos.writeUTF(p);
+            dos.writeObject(p);
 
-            // the following loop performs the exchange of
-            // information between client and client handler
-            while (true)
-            {
-                System.out.print(dis.readUTF());
-                String tosend = scn.nextLine();
-                dos.writeUTF(tosend);
 
-                // If client sends exit,close this connection
-                // and then break from the while loop
-                if(tosend.equals("exit"))
-                {
-                    System.out.println("[SERVER "+PORT+"] Closing this connection : " + s);
-                    s.close();
-                    System.out.println("[SERVER "+PORT+"] Connection closed");
-                    break;
-                }
+            HashMap<String, String> bl = new HashMap<>();
+            bl = (HashMap<String, String>) dis.readObject();
+            consumer.setBroker_list(bl);
 
-                // printing date or time as requested by client
-                String received = dis.readUTF();
-                System.out.println(received);
+            System.out.println(bl);
+
+            ArrayList<String> artists = new ArrayList<>();
+            artists = (ArrayList<String>) dis.readObject();
+
+            for (int i = 0; i < artists.size(); i++) {
+                System.out.println(i + 1 + ". " + artists.get(i));
             }
 
+            System.out.println("Choose an number...");
+            Scanner scanner = new Scanner(System.in);
+            String inputString = scanner.nextLine();
+
+            inputString = artists.get(Integer.parseInt(inputString) - 1);
+
+            String iportname = consumer.getBroker_list().get(inputString);
+            System.out.println(iportname);
+
+            String[] splited = iportname.split("\\s+");
+
+            if (!(splited[0].equals(IP) && (Integer.parseInt(splited[1]) == PORT))) {
+                dos.writeObject("yes");
+                s.close();
+                dis.close();
+                dos.close();
+
+                ip = InetAddress.getByName(splited[0]);
+                s = new Socket(ip, Integer.parseInt(splited[1]));
+
+                dos = new ObjectOutputStream(s.getOutputStream());
+                dis = new ObjectInputStream(s.getInputStream());
+
+                dos.writeObject("reconnect");
+
+            } else {
+                String exit = "no";
+                dos.writeObject(exit);
+            }
+
+            dos.writeObject(inputString);
+
+
+
+
+
+
+
             // closing resources
-            //scn.close();
             dis.close();
             dos.close();
         }catch(Exception e){

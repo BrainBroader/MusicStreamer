@@ -1,18 +1,19 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class Consumer extends Node {
 
-    private static ArrayList<Integer> brokers_ports = new ArrayList<Integer>();
-    private static ArrayList<String> brokers_ip = new ArrayList<String>();
+    private static ArrayList<Integer> brokers_ports = new ArrayList<>();
+    private static ArrayList<String> brokers_ip = new ArrayList<>();
+    private static HashMap<String, String> broker_list = new HashMap<>();
+
 
     public static void main(String[] args) {
 
         Consumer c = new Consumer();
         c.connect();
-
-
     }
 
     public void connect() {
@@ -22,9 +23,8 @@ public class Consumer extends Node {
         Random r = new Random();
         int number = r.nextInt(brokers_ip.size());
 
-        ConHandler con_thread = new ConHandler(brokers_ip.get(number), brokers_ports.get(number));
+        ConHandler con_thread = new ConHandler(brokers_ip.get(number), brokers_ports.get(number),this);
         con_thread.start();
-
 
     }
 
@@ -59,6 +59,14 @@ public class Consumer extends Node {
         } catch (IOException e) {
             System.out.println("Error!!!");
         }
+    }
+
+    public void setBroker_list(HashMap<String, String> broker_list) {
+        this.broker_list = broker_list;
+    }
+
+    public HashMap<String, String> getBroker_list() {
+        return this.broker_list;
     }
 
 

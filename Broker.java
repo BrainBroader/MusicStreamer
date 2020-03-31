@@ -61,11 +61,21 @@ public class Broker extends Node {
                     System.out.println("Assigning new thread for this consumer.");
 
                     // create a new thread object
-                    Thread t2 = new ActionsForConsumer(s, dis, dos, PORT);
+                    Thread t2 = new ActionsForConsumer(s, dis, dos, PORT, this);
                     consumers.add((ActionsForConsumer) t2);
                     // Invoking the start() method
                     t2.start();
 
+                } else if (received.equals("reconnect")) {
+
+                    System.out.println("\nA new consumer connected. : " + s);
+                    System.out.println("Assigning new thread for this consumer.");
+
+                    // create a new thread object
+                    Thread t2 = new ActionsForConsumer(s, dis, dos, PORT, this, "reconnect");
+                    consumers.add((ActionsForConsumer) t2);
+                    // Invoking the start() method
+                    t2.start();
                 }
 
             } catch (Exception e) {
@@ -144,7 +154,7 @@ public class Broker extends Node {
 
         for (int i=0;i < brokers_ip.size();i++) {
             Ipp.add(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))));
-            hash_ip.put(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))), brokers_ip.get(i) + Integer.toString(brokers_ports.get(i)));
+            hash_ip.put(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))), brokers_ip.get(i) + " " +Integer.toString(brokers_ports.get(i)));
         }
 
         Collections.sort(Ipp);
@@ -170,9 +180,6 @@ public class Broker extends Node {
     }
 
 
-
-
-
     //Finds in which Broker this
     public BigInteger findBroker(BigInteger artist) {
 
@@ -182,7 +189,6 @@ public class Broker extends Node {
         for (int j = (Ipp.size() - 1); j >= 0; j--) {
             if ((j == (Ipp.size() - 1)) && (artist.compareTo(Ipp.get(j)) > 0)) {
                  artist = artist.mod(Ipp.get(j));
-                 System.out.println("la la");
             }
 
             if (j != 0) {
@@ -196,7 +202,6 @@ public class Broker extends Node {
                     return big;
                 }
             }
-
         }
         return big;
     }
@@ -255,6 +260,10 @@ public class Broker extends Node {
 
     public ArrayList<BigInteger> getIpp() {
         return this.Ipp;
+    }
+
+    public HashMap<String, String> getBrokers_list() {
+        return this.brokers_list;
     }
 
 
