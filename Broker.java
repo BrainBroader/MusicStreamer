@@ -17,6 +17,8 @@ public class Broker extends Node {
     private static ArrayList<String> artists = new ArrayList<String>();
     private static ArrayList<BigInteger> Ipp = new ArrayList<>();
     private static ArrayList<BigInteger> h_artists = new ArrayList<>();
+    private static Queue<String> conTopub = new LinkedList<>();
+    private static Queue<String> pubTocon = new LinkedList<>();
 
 
     public void openServer(int PORT) throws IOException {
@@ -176,7 +178,7 @@ public class Broker extends Node {
 
             brokers_list.put(artist, br);
         }
-        System.out.println(brokers_list);
+        //System.out.println(brokers_list);
     }
 
 
@@ -264,6 +266,14 @@ public class Broker extends Node {
 
     public HashMap<String, String> getBrokers_list() {
         return this.brokers_list;
+    }
+
+    public Queue<String> getConTopub() {
+        return this.conTopub;
+    }
+
+    public Queue<String> getPubTocon() {
+        return this.pubTocon;
     }
 
 

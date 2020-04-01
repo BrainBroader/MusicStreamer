@@ -18,14 +18,15 @@ public class Publisher extends Node
     private static ArrayList<Integer> brokers_ports = new ArrayList<>();
     private static ArrayList<String> brokers_ip = new ArrayList<>();
     private static ArrayList<String> artists = new ArrayList<>();
-    private static ArrayList<List<MusicFile>> songs = new ArrayList<>();
+    private static ArrayList<MusicFile> songs = new ArrayList<>();
     private static HashMap<String, String> broker_list = new HashMap<>();
+    private static ArrayList<String> filenames = new ArrayList<>();
     private static String IP;
     //private static int Brokers;
 
     public static void main(String[] args) throws Exception {
 
-        ArrayList<MusicFile> array = new ArrayList<MusicFile>();
+
         String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset1\\Comedy";
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
@@ -35,8 +36,9 @@ public class Publisher extends Node
             Mp3Parse parse = new Mp3Parse();
             MusicFile m = new MusicFile();
             m = parse.mp3extraction(p);
-            array.add(m);
+            songs.add(m);
             addArtist(m.getArtistName());
+            filenames.add(path.getFileName().toString());
             //System.out.println(path.getFileName()+" :"+m.getArtistName());
 
             /*List<MusicFile> list = new ArrayList<MusicFile>();
@@ -45,7 +47,7 @@ public class Publisher extends Node
         }
         stream.close();
 
-        System.out.println("Tracks : "+array.size());
+        System.out.println("Tracks : "+songs.size());
 
         /*for (int i = 0; i < artists.size(); i++) {
             BigInteger hash = MD5(artists.get(i));
@@ -121,6 +123,14 @@ public class Publisher extends Node
 
     public void setBroker_list(HashMap<String, String> broker_list) {
         this.broker_list = broker_list;
+    }
+
+    public ArrayList<String> getFilenames() {
+        return this.filenames;
+    }
+
+    public ArrayList<MusicFile> getSongs() {
+        return this.songs;
     }
 
 } 

@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Scanner;
 
 public class ActionsForConsumer extends Thread {
@@ -58,7 +60,6 @@ public class ActionsForConsumer extends Thread {
 
             if(exit.equals("no")) {
                 stream_reconnect();
-                System.out.println("nai nai nai");
             }
 
         } catch (IOException e) {
@@ -75,9 +76,31 @@ public class ActionsForConsumer extends Thread {
 
         try {
 
-            dos.writeObject("I am here");
+            String artist = (String) dis.readObject();
+            //System.out.println("Artist : " +artist);
+            (b.getConTopub()).add(artist);
+
+            Queue<String> n = b.getPubTocon();
+            while (n.size() == 0) {
+                n = b.getPubTocon();
+            }
+
+            ArrayList<String> list = new ArrayList<>();
+
+            int s = b.getPubTocon().size();
+            //System.out.println(s);
+            for (int i = 0; i < s; i++) {
+                String removed = b.getPubTocon().remove();
+                list.add(removed);
+            }
+
+            dos.writeObject(list);
+
+
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

@@ -46,7 +46,7 @@ public class ConHandler extends Thread {
             bl = (HashMap<String, String>) dis.readObject();
             consumer.setBroker_list(bl);
 
-            System.out.println(bl);
+            //System.out.println(bl);
 
             ArrayList<String> artists = new ArrayList<>();
             artists = (ArrayList<String>) dis.readObject();
@@ -62,7 +62,7 @@ public class ConHandler extends Thread {
             inputString = artists.get(Integer.parseInt(inputString) - 1);
 
             String iportname = consumer.getBroker_list().get(inputString);
-            System.out.println(iportname);
+            //System.out.println(iportname);
 
             String[] splited = iportname.split("\\s+");
 
@@ -86,6 +86,12 @@ public class ConHandler extends Thread {
             }
 
             dos.writeObject(inputString);
+
+            ArrayList<String> list = (ArrayList<String>) dis.readObject();
+
+            for (int i = 0; i < list.size(); i++) {
+                System.out.println((i+1) +". "+list.get(i));
+            }
 
 
 

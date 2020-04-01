@@ -54,10 +54,10 @@ public class Mp3Parse {
 
         int bytes = array.length;
         int loops = 0;
-        if (bytes % 64000 == 0) {
-            loops = bytes / 64000;
+        if (bytes % 512000 == 0) {
+            loops = bytes / 512000;
         } else {
-            loops = (bytes / 64000) + 1;
+            loops = (bytes / 512000) + 1;
         }
 
 
@@ -65,17 +65,17 @@ public class Mp3Parse {
 
             if (i == loops - 1) {
 
-                byte[] a = new byte[array.length - i * 64000];
+                byte[] a = new byte[array.length - i * 512000];
                 for (int j = 0; j < a.length; j++) {
-                    a[j] = array[(i * 64000) + j];
+                    a[j] = array[(i * 512000) + j];
                 }
                 MusicFile m = new MusicFile(music.getTrackName(),music.getArtistName(),music.getAlbumInfo(),music.getGenre(),a);
                 ret.add(m);
 
             } else {
-                byte[] a = new byte[64000];
-                for (int j = 0; j < 64000; j++) {
-                    a[j] = array[(i * 64000) + j];
+                byte[] a = new byte[512000];
+                for (int j = 0; j < 512000; j++) {
+                    a[j] = array[(i * 512000) + j];
                 }
                 MusicFile m = new MusicFile(music.getTrackName(),music.getArtistName(),music.getAlbumInfo(),music.getGenre(),a);
                 ret.add(m);

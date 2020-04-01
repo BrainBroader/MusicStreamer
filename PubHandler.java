@@ -2,6 +2,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PubHandler extends Thread {
@@ -50,13 +51,30 @@ public class PubHandler extends Thread {
             bl = (HashMap<String, String>) dis.readObject();
             pub.setBroker_list(bl);
 
-            System.out.println(bl);
+            //System.out.println(bl);
 
             while (true) {
-                if (p.equals("exit")) {
+                String an = (String)dis.readObject();
+                if (an.equals("break")) {
                     break;
                 }
             }
+
+            String art = (String) dis.readObject();
+
+            ArrayList<String> art_fnames = new ArrayList<>();
+
+            for (int i = 0; i < pub.getSongs().size(); i++) {
+                if (art.equals(pub.getSongs().get(i).getArtistName())) {
+                    art_fnames.add(pub.getFilenames().get(i));
+                }
+            }
+
+            /*for (int i = 0; i < art_fnames.size(); i++) {
+                System.out.println(art_fnames.get(i));
+            }*/
+
+            dos.writeObject(art_fnames);
 
 
 

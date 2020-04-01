@@ -1,6 +1,7 @@
 import java.io.*; 
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Scanner;
 
 class ActionsForPub extends Thread
@@ -41,9 +42,9 @@ class ActionsForPub extends Thread
             artists = (ArrayList<String>) dis.readObject();
             b.setArtists(artists);
 
-            for (int i = 0; i < b.getArtists().size(); i++) {
+            /*for (int i = 0; i < b.getArtists().size(); i++) {
                 System.out.println(b.getArtists().get(i));
-            }
+            }*/
 
             ArrayList<String> ips = new ArrayList<>();
             ips = (ArrayList<String>) dis.readObject();
@@ -53,13 +54,32 @@ class ActionsForPub extends Thread
             ports = (ArrayList<Integer>) dis.readObject();
             b.setBrokers_ports(ports);
 
-            for (int i = 0; i < b.getBrokers_ip().size(); i++) {
+            /*for (int i = 0; i < b.getBrokers_ip().size(); i++) {
                 System.out.println(b.getBrokers_ip().get(i) +" "+ b.getBrokers_ports().get(i));
-            }
+            }*/
 
             b.beginHash();
 
             dos.writeObject(b.getBrokers_list());
+
+            //String artist = b.getConTopub().remove();
+
+            Queue<String> n = b.getConTopub();
+            while (n.size() == 0) {
+                n = b.getConTopub();
+            }
+            dos.writeObject("break");
+
+            dos.writeObject(b.getConTopub().remove());
+
+            ArrayList<String> list = new ArrayList<>();
+            list = (ArrayList<String>) dis.readObject();
+
+            for (int i = 0; i < list.size(); i++) {
+                (b.getPubTocon()).add(list.get(i));
+            }
+
+
 
 
 
