@@ -62,34 +62,42 @@ class ActionsForPub extends Thread
 
             dos.writeObject(b.getBrokers_list());
 
-            //String artist = b.getConTopub().remove();
 
-            Queue<String> n = b.getConTopub();
-            while (n.size() == 0) {
-                n = b.getConTopub();
+            while (!b.getFlag()) {
+                try {
+                    b.send();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            dos.writeObject("break");
-
             dos.writeObject(b.getConTopub().remove());
+            b.setFlag(false);
+            b.arrive();
 
             ArrayList<String> list = new ArrayList<>();
             list = (ArrayList<String>) dis.readObject();
+
+            while (b.getFlag2()) {
+                try {
+                    b.send();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
             for (int i = 0; i < list.size(); i++) {
                 (b.getPubTocon()).add(list.get(i));
             }
 
-
-
-
-
-
-            //b.getIpp();
+            b.setFlag2(true);
+            b.arrive();
 
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

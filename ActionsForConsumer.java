@@ -56,6 +56,7 @@ public class ActionsForConsumer extends Thread {
             dos.writeObject(b.getBrokers_list());
             dos.writeObject(b.getArtists());
 
+
             String exit = (String) dis.readObject();
 
             if(exit.equals("no")) {
@@ -71,36 +72,50 @@ public class ActionsForConsumer extends Thread {
 
     public synchronized void stream_reconnect() {
 
-        String received;
-        String toreturn;
-
         try {
 
             String artist = (String) dis.readObject();
-            //System.out.println("Artist : " +artist);
-            (b.getConTopub()).add(artist);
+            System.out.println("Artist : " +artist);
 
-            Queue<String> n = b.getPubTocon();
-            while (n.size() == 0) {
-                n = b.getPubTocon();
+            while (b.getFlag()) {
+                try {
+                    b.send();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //System.out.println("b.getFlag()");
+            }
+            (b.getConTopub()).add(artist);
+            b.setFlag(true);
+            b.arrive();
+
+            while (!b.getFlag2()) {
+                try {
+                    b.send();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             ArrayList<String> list = new ArrayList<>();
 
             int s = b.getPubTocon().size();
-            //System.out.println(s);
             for (int i = 0; i < s; i++) {
                 String removed = b.getPubTocon().remove();
                 list.add(removed);
             }
 
             dos.writeObject(list);
+            b.setFlag2(false);
+            b.arrive();
 
 
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

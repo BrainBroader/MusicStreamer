@@ -53,29 +53,28 @@ public class PubHandler extends Thread {
 
             //System.out.println(bl);
 
-            while (true) {
-                String an = (String)dis.readObject();
-                if (an.equals("break")) {
+            //while (true) {
+
+                String art = (String) dis.readObject();
+
+                /*if (art.equals("exit")) {
                     break;
+                }*/
+
+                ArrayList<String> art_fnames = new ArrayList<>();
+
+                for (int i = 0; i < pub.getSongs().size(); i++) {
+                    if (art.equals(pub.getSongs().get(i).getArtistName())) {
+                        art_fnames.add(pub.getFilenames().get(i));
+                    }
                 }
-            }
 
-            String art = (String) dis.readObject();
+                /*for (int i = 0; i < art_fnames.size(); i++) {
+                    System.out.println(art_fnames.get(i));
+                }*/
 
-            ArrayList<String> art_fnames = new ArrayList<>();
-
-            for (int i = 0; i < pub.getSongs().size(); i++) {
-                if (art.equals(pub.getSongs().get(i).getArtistName())) {
-                    art_fnames.add(pub.getFilenames().get(i));
-                }
-            }
-
-            /*for (int i = 0; i < art_fnames.size(); i++) {
-                System.out.println(art_fnames.get(i));
-            }*/
-
-            dos.writeObject(art_fnames);
-
+                dos.writeObject(art_fnames);
+            //}
 
 
 

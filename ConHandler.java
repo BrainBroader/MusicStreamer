@@ -46,7 +46,7 @@ public class ConHandler extends Thread {
             bl = (HashMap<String, String>) dis.readObject();
             consumer.setBroker_list(bl);
 
-            //System.out.println(bl);
+            System.out.println(bl);
 
             ArrayList<String> artists = new ArrayList<>();
             artists = (ArrayList<String>) dis.readObject();

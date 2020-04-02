@@ -19,6 +19,8 @@ public class Broker extends Node {
     private static ArrayList<BigInteger> h_artists = new ArrayList<>();
     private static Queue<String> conTopub = new LinkedList<>();
     private static Queue<String> pubTocon = new LinkedList<>();
+    private boolean flag = false;
+    private boolean flag2 = false;
 
 
     public void openServer(int PORT) throws IOException {
@@ -232,6 +234,48 @@ public class Broker extends Node {
         }
     }
 
+    // Prints a string and waits for consume()
+    public void send()throws InterruptedException
+    {
+        // synchronized block ensures only one thread
+        // running at a time.
+        synchronized(this)
+        {
+            //System.out.println("producer thread running");
+
+            // releases the lock on shared resource
+            wait();
+
+            // and waits till some other method invokes notify().
+            //System.out.println("Resumed");
+        }
+    }
+
+    // Sleeps for some time and waits for a key press. After key
+    // is pressed, it notifies produce().
+    public void arrive()throws InterruptedException
+    {
+        // this makes the produce thread to run first.
+        //Thread.sleep(1000);
+        //Scanner s = new Scanner(System.in);
+
+        // synchronized block ensures only one thread
+        // running at a time.
+        synchronized(this)
+        {
+            //System.out.println("Waiting for return key.");
+            //s.nextLine();
+            //System.out.println("Return key pressed");
+
+            // notifies the produce thread that it
+            // can wake up.
+            notify();
+
+            // Sleep
+            //Thread.sleep(2000);
+        }
+    }
+
     public void setBrokers_ports(ArrayList<Integer> brokers_ports) {
         this.brokers_ports = brokers_ports;
     }
@@ -275,6 +319,24 @@ public class Broker extends Node {
     public Queue<String> getPubTocon() {
         return this.pubTocon;
     }
+
+    public boolean getFlag() {
+        return this.flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
+
+
+    public boolean getFlag2() {
+        return this.flag2;
+    }
+
+    public void setFlag2(boolean flag2) {
+        this.flag2 = flag2;
+    }
+
 
 
     public static void main(String[] args) throws IOException {
