@@ -51,50 +51,57 @@ public class ConHandler extends Thread {
             ArrayList<String> artists = new ArrayList<>();
             artists = (ArrayList<String>) dis.readObject();
 
-            for (int i = 0; i < artists.size(); i++) {
-                System.out.println(i + 1 + ". " + artists.get(i));
+            while(true) {
+                for (int i = 0; i < artists.size(); i++) {
+                    System.out.println(i + 1 + ". " + artists.get(i));
+                }
+
+                System.out.println("Choose an number...");
+                Scanner scanner = new Scanner(System.in);
+                String inputString = scanner.nextLine();
+                if(inputString.equals("exit")){
+                    break;
+                }
+
+                inputString = artists.get(Integer.parseInt(inputString) - 1);
+
+                String iportname = consumer.getBroker_list().get(inputString);
+                //System.out.println(iportname);
+
+                String[] splited = iportname.split("\\s+");
+
+                if (!(splited[0].equals(IP) && (Integer.parseInt(splited[1]) == PORT))) {
+                    dos.writeObject("yes");
+                    s.close();
+                    dis.close();
+                    dos.close();
+
+                    ip = InetAddress.getByName(splited[0]);
+                    s = new Socket(ip, Integer.parseInt(splited[1]));
+
+                    dos = new ObjectOutputStream(s.getOutputStream());
+                    dis = new ObjectInputStream(s.getInputStream());
+
+                    dos.writeObject("reconnect");
+
+                } else {
+                    String exit = "no";
+                    dos.writeObject(exit);
+                }
+
+                dos.writeObject(inputString);
+
+                ArrayList<String> list = (ArrayList<String>) dis.readObject();
+
+                for (int i = 0; i < list.size(); i++) {
+                    System.out.println((i + 1) + ". " + list.get(i));
+                }
+                System.out.println(" ");
+
+
+
+
             }
-
-            System.out.println("Choose an number...");
-            Scanner scanner = new Scanner(System.in);
-            String inputString = scanner.nextLine();
-
-            inputString = artists.get(Integer.parseInt(inputString) - 1);
-
-            String iportname = consumer.getBroker_list().get(inputString);
-            //System.out.println(iportname);
-
-            String[] splited = iportname.split("\\s+");
-
-            if (!(splited[0].equals(IP) && (Integer.parseInt(splited[1]) == PORT))) {
-                dos.writeObject("yes");
-                s.close();
-                dis.close();
-                dos.close();
-
-                ip = InetAddress.getByName(splited[0]);
-                s = new Socket(ip, Integer.parseInt(splited[1]));
-
-                dos = new ObjectOutputStream(s.getOutputStream());
-                dis = new ObjectInputStream(s.getInputStream());
-
-                dos.writeObject("reconnect");
-
-            } else {
-                String exit = "no";
-                dos.writeObject(exit);
-            }
-
-            dos.writeObject(inputString);
-
-            ArrayList<String> list = (ArrayList<String>) dis.readObject();
-
-            for (int i = 0; i < list.size(); i++) {
-                System.out.println((i+1) +". "+list.get(i));
-            }
-
-
-
 
 
 

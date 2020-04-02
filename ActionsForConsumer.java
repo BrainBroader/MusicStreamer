@@ -34,6 +34,7 @@ public class ActionsForConsumer extends Thread {
     }
 
 
+
     @Override
     public void run()
     {
@@ -56,11 +57,15 @@ public class ActionsForConsumer extends Thread {
             dos.writeObject(b.getBrokers_list());
             dos.writeObject(b.getArtists());
 
+            while(true) {
+               String exit = (String) dis.readObject();
 
-            String exit = (String) dis.readObject();
-
-            if(exit.equals("no")) {
-                stream_reconnect();
+               if (exit.equals("no")) {
+                   stream_reconnect();
+               }
+               else if(exit.equals("yes")){
+                   break;
+               }
             }
 
         } catch (IOException e) {

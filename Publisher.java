@@ -27,7 +27,7 @@ public class Publisher extends Node
     public static void main(String[] args) throws Exception {
 
 
-        String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset1\\Comedy";
+        String filepath = "C:\\Users\\MrAG99\\IdeaProjects\\MusicStreamer\\dataset1\\Comedy";
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {

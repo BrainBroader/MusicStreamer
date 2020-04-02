@@ -2,9 +2,7 @@ public class ArtistName {
 
     private String artistName;
 
-    public ArtistName() {
-        
-    }
+    public ArtistName() { }
 
     public ArtistName(String artistName) {
         this.artistName = artistName;

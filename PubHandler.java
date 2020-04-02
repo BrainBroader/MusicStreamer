@@ -53,13 +53,13 @@ public class PubHandler extends Thread {
 
             //System.out.println(bl);
 
-            //while (true) {
+            while (true) {
 
                 String art = (String) dis.readObject();
 
-                /*if (art.equals("exit")) {
+                if (art.equals("exit")) {
                     break;
-                }*/
+                }
 
                 ArrayList<String> art_fnames = new ArrayList<>();
 
@@ -74,7 +74,7 @@ public class PubHandler extends Thread {
                 }*/
 
                 dos.writeObject(art_fnames);
-            //}
+            }
 
 
 

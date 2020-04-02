@@ -61,37 +61,37 @@ class ActionsForPub extends Thread
             b.beginHash();
 
             dos.writeObject(b.getBrokers_list());
+            while(true) {
 
-
-            while (!b.getFlag()) {
-                try {
-                    b.send();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                while (!b.getFlag()) {
+                    try {
+                        b.send();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            dos.writeObject(b.getConTopub().remove());
-            b.setFlag(false);
-            b.arrive();
+                dos.writeObject(b.getConTopub().remove());
+                b.setFlag(false);
+                b.arrive();
 
-            ArrayList<String> list = new ArrayList<>();
-            list = (ArrayList<String>) dis.readObject();
+                ArrayList<String> list = new ArrayList<>();
+                list = (ArrayList<String>) dis.readObject();
 
-            while (b.getFlag2()) {
-                try {
-                    b.send();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                while (b.getFlag2()) {
+                    try {
+                        b.send();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+
+                for (int i = 0; i < list.size(); i++) {
+                    (b.getPubTocon()).add(list.get(i));
+                }
+
+                b.setFlag2(true);
+                b.arrive();
             }
-
-            for (int i = 0; i < list.size(); i++) {
-                (b.getPubTocon()).add(list.get(i));
-            }
-
-            b.setFlag2(true);
-            b.arrive();
-
 
         } catch (IOException e) {
             e.printStackTrace();
