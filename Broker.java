@@ -17,10 +17,21 @@ public class Broker extends Node {
     private static ArrayList<String> artists = new ArrayList<String>();
     private static ArrayList<BigInteger> Ipp = new ArrayList<>();
     private static ArrayList<BigInteger> h_artists = new ArrayList<>();
+    private static HashMap<BigInteger, String> hash_ip = new HashMap<>();
+    private static HashMap<BigInteger, String> hash_art = new HashMap<>();
+    private static HashMap<String, String> brokers_list = new HashMap<>();
     private static Queue<String> conTopub = new LinkedList<>();
     private static Queue<String> pubTocon = new LinkedList<>();
     private boolean flag = false;
     private boolean flag2 = false;
+
+    public static void main(String[] args) throws IOException {
+
+        port = loadPorts("brokers2.txt");
+
+        new Broker().openServer(port);
+
+    }
 
 
     public void openServer(int PORT) throws IOException {
@@ -30,8 +41,7 @@ public class Broker extends Node {
         System.out.println("Server started.");
         System.out.println("Waiting for a connection...");
 
-        // running infinite loop for getting
-        // client request
+
         while (true) {
             Socket s = null;
 
@@ -39,15 +49,12 @@ public class Broker extends Node {
                 // socket object to receive incoming client requests
                 s = ss.accept();
 
-
                 // obtaining input and out streams
                 ObjectOutputStream dos = new ObjectOutputStream(s.getOutputStream());
                 ObjectInputStream dis = new ObjectInputStream(s.getInputStream());
 
 
-
                 String received = (String)dis.readObject();
-
 
                 if (received.equals("Publisher")) {
                     System.out.println("\nA new publisher connected. : " + s);
@@ -148,9 +155,16 @@ public class Broker extends Node {
         }
     }
 
-    HashMap<BigInteger, String> hash_ip = new HashMap<>();
-    HashMap<BigInteger, String> hash_art = new HashMap<>();
-    HashMap<String, String> brokers_list = new HashMap<>();
+    public void BrHash() throws IOException {
+
+        iportName = MD5(getIP() + Integer.toString(port));
+
+        for (int i=0;i < brokers_ip.size();i++) {
+            Ipp.add(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))));
+            hash_ip.put(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))), brokers_ip.get(i) + " " +Integer.toString(brokers_ports.get(i)));
+        }
+
+    }
 
     public void beginHash() throws IOException {
 
@@ -170,8 +184,6 @@ public class Broker extends Node {
 
         Collections.sort(h_artists);
 
-
-
         for (int i = 0; i < h_artists.size(); i++) {
             BigInteger broker = findBroker(h_artists.get(i));
 
@@ -181,6 +193,7 @@ public class Broker extends Node {
             brokers_list.put(artist, br);
         }
         //System.out.println(brokers_list);
+
     }
 
 
@@ -337,13 +350,9 @@ public class Broker extends Node {
         this.flag2 = flag2;
     }
 
-
-
-    public static void main(String[] args) throws IOException {
-
-        port = loadPorts("brokers2.txt");
-
-        new Broker().openServer(port);
-
+    public HashMap<BigInteger, String> getHash_ip() {
+        return this.hash_ip;
     }
+
+
 }

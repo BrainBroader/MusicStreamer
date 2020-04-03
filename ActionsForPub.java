@@ -24,9 +24,37 @@ class ActionsForPub extends Thread
     } 
   
     @Override
-    public void run() {
+    public synchronized void run() {
 
-        push_response();
+        try {
+
+            ArrayList<String> artists = new ArrayList<>();
+            artists = (ArrayList<String>) dis.readObject();
+            b.setArtists(artists);
+
+            ArrayList<String> ips = new ArrayList<>();
+            ips = (ArrayList<String>) dis.readObject();
+            b.setBrokers_ip(ips);
+
+            ArrayList<Integer> ports = new ArrayList<>();
+            ports = (ArrayList<Integer>) dis.readObject();
+            b.setBrokers_ports(ports);
+
+
+            b.beginHash();
+            dos.writeObject(b.getHash_ip());
+            dos.writeObject(b.getBrokers_list());
+
+            dos.writeObject(b);
+
+            System.out.println("Closing...");
+            System.out.println("Connection closed");
+
+
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void push_response() {
@@ -38,21 +66,21 @@ class ActionsForPub extends Thread
 
         try {
 
-            ArrayList<String> artists = new ArrayList<>();
+            /*ArrayList<String> artists = new ArrayList<>();
             artists = (ArrayList<String>) dis.readObject();
-            b.setArtists(artists);
+            b.setArtists(artists);*/
 
             /*for (int i = 0; i < b.getArtists().size(); i++) {
                 System.out.println(b.getArtists().get(i));
             }*/
 
-            ArrayList<String> ips = new ArrayList<>();
+            /*ArrayList<String> ips = new ArrayList<>();
             ips = (ArrayList<String>) dis.readObject();
             b.setBrokers_ip(ips);
 
             ArrayList<Integer> ports = new ArrayList<>();
             ports = (ArrayList<Integer>) dis.readObject();
-            b.setBrokers_ports(ports);
+            b.setBrokers_ports(ports);*/
 
             /*for (int i = 0; i < b.getBrokers_ip().size(); i++) {
                 System.out.println(b.getBrokers_ip().get(i) +" "+ b.getBrokers_ports().get(i));

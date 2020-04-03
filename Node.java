@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -6,7 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-public class Node extends Thread {
+public class Node implements Serializable {
 
     //List<Broker> brokers;
 

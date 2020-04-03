@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Queue;
@@ -20,7 +21,7 @@ public class ActionsForConsumer extends Thread {
         this.dos = dos;
         this.PORT = PORT;
         this.b = b;
-        this.r = "no";
+        this.r = "firstTime";
     }
 
     public ActionsForConsumer(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT, Broker b, String r)
@@ -36,53 +37,95 @@ public class ActionsForConsumer extends Thread {
 
 
     @Override
-    public void run()
+    public synchronized void run()
     {
-        if (r.equals("reconnect")) {
+        try {
+            if (r.equals("firstTime")) {
+                dos.writeObject(b.getBrokers_list());
+                dos.writeObject(b.getArtists());
+            }
+
+            String exit = "";
+
+            if (r.equals("firstTime")) {
+                exit = (String) dis.readObject();
+                System.out.println("ELA ELA ELA ");
+            }
+
+            if (exit.equals("no") || r.equals("reconnect")) {
+
+                String artist = (String) dis.readObject();
+                System.out.println("Artist : " +artist);
+
+                Socket socket = null;
+                InetAddress ipp = null;
+                ObjectOutputStream out = null;
+                ObjectInputStream in = null;
+
+                try {
+                    ipp = InetAddress.getByName("192.168.1.12");
+                    socket = new Socket(ipp, 9090);
+
+                    out = new ObjectOutputStream(socket.getOutputStream());
+                    in = new ObjectInputStream(socket.getInputStream());
+
+                    out.writeObject(artist);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        /*if (r.equals("reconnect")) {
             stream_reconnect();
         } else {
             stream();
-        }
+        }*/
 
     }
 
 
-    public synchronized void stream() {
+    /*public synchronized void stream() {
 
         String received;
         String toreturn;
 
         try {
 
-            dos.writeObject(b.getBrokers_list());
-            dos.writeObject(b.getArtists());
 
-            while(true) {
-               String exit = (String) dis.readObject();
 
-               if (exit.equals("no")) {
-                   stream_reconnect();
-               }
-               else if(exit.equals("yes")){
-                   break;
-               }
-            }
+
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public synchronized void stream_reconnect() {
+
+        Socket s = null;
+        InetAddress ip = null;
+        ObjectOutputStream dos = null;
+        ObjectInputStream dis = null;
 
         try {
 
             String artist = (String) dis.readObject();
             System.out.println("Artist : " +artist);
 
-            while (b.getFlag()) {
+
+
+            /*while (b.getFlag()) {
                 try {
                     b.send();
                 } catch (InterruptedException e) {
@@ -112,7 +155,7 @@ public class ActionsForConsumer extends Thread {
 
             dos.writeObject(list);
             b.setFlag2(false);
-            b.arrive();
+            b.arrive();*/
 
 
 
@@ -120,9 +163,9 @@ public class ActionsForConsumer extends Thread {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
+        } /*catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 
