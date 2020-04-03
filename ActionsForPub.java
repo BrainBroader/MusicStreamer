@@ -30,7 +30,7 @@ class ActionsForPub extends Thread
 
             ArrayList<String> artists = new ArrayList<>();
             artists = (ArrayList<String>) dis.readObject();
-            b.setArtists(artists);
+            b.addArtist(artists);
 
             ArrayList<String> ips = new ArrayList<>();
             ips = (ArrayList<String>) dis.readObject();
@@ -57,7 +57,7 @@ class ActionsForPub extends Thread
         }
     }
 
-    public synchronized void push_response() {
+    /*public synchronized void push_response() {
 
         String received;
         String toreturn;
@@ -84,7 +84,7 @@ class ActionsForPub extends Thread
 
             /*for (int i = 0; i < b.getBrokers_ip().size(); i++) {
                 System.out.println(b.getBrokers_ip().get(i) +" "+ b.getBrokers_ports().get(i));
-            }*/
+            }
 
             b.beginHash();
 
@@ -128,5 +128,5 @@ class ActionsForPub extends Thread
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

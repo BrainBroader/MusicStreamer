@@ -20,10 +20,11 @@ public class Broker extends Node {
     private static HashMap<BigInteger, String> hash_ip = new HashMap<>();   //hash(ip+port), ip + port
     private static HashMap<BigInteger, String> hash_art = new HashMap<>();  //hash(artistName), artistName
     private static HashMap<String, String> brokers_list = new HashMap<>();  //artistName, ip+port (of Broker that artistName belongs to)
-    private static Queue<String> conTopub = new LinkedList<>();
+    /*private static Queue<String> conTopub = new LinkedList<>();
     private static Queue<String> pubTocon = new LinkedList<>();
     private boolean flag = false;
-    private boolean flag2 = false;
+    private boolean flag2 = false;*/
+
 
     public static void main(String[] args) throws IOException {
 
@@ -92,6 +93,14 @@ public class Broker extends Node {
             } catch (Exception e) {
                 s.close();
                 e.printStackTrace();
+            }
+        }
+    }
+
+    public void addArtist(ArrayList<String> list) {
+        for (int i = 0; i < list.size(); i++) {
+            if (!this.artists.contains(list.get(i))) {
+                this.artists.add(list.get(i));
             }
         }
     }
@@ -247,7 +256,7 @@ public class Broker extends Node {
         }
     }
 
-    // Prints a string and waits for consume()
+    /*// Prints a string and waits for consume()
     public void send()throws InterruptedException
     {
         // synchronized block ensures only one thread
@@ -287,7 +296,7 @@ public class Broker extends Node {
             // Sleep
             //Thread.sleep(2000);
         }
-    }
+    }*/
 
     public void setBrokers_ports(ArrayList<Integer> brokers_ports) {
         this.brokers_ports = brokers_ports;
@@ -325,7 +334,7 @@ public class Broker extends Node {
         return this.brokers_list;
     }
 
-    public Queue<String> getConTopub() {
+    /*public Queue<String> getConTopub() {
         return this.conTopub;
     }
 
@@ -348,7 +357,7 @@ public class Broker extends Node {
 
     public void setFlag2(boolean flag2) {
         this.flag2 = flag2;
-    }
+    }*/
 
     public HashMap<BigInteger, String> getHash_ip() {
         return this.hash_ip;

@@ -29,37 +29,52 @@ public class Publisher extends Node
 
     public static void main(String[] args) throws Exception {
 
+        System.out.print("From : ");
+        Scanner keyboard = new Scanner(System.in);
+        String from1 = keyboard.nextLine();
+        //System.out.println();
 
-        String filepath = System.getProperty("user.dir") + "\\Dataset\\dataset1\\Comedy";
+        System.out.print("To : ");
+        String to1 = keyboard.nextLine();
+        System.out.println();
+        from1 = from1.toLowerCase();
+        to1 = to1.toLowerCase();
+
+        char from = from1.charAt(0);
+        char to = to1.charAt(0);
+
+
+
+        String filepath = System.getProperty("user.dir") + "\\dataset1";
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {
+            String name = (path.getFileName().toString());
+            name = name.toLowerCase();
+            char letter = name.charAt(0);
 
-            String p = filepath + "/" +(path.getFileName()).toString();
-            Mp3Parse parse = new Mp3Parse();
-            MusicFile m = new MusicFile();
-            m = parse.mp3extraction(p);
-            songs.add(m);
-            addArtist(m.getArtistName());
-            filenames.add(path.getFileName().toString());
-            //System.out.println(path.getFileName()+" :"+m.getArtistName());
+            if(letter >= from && letter <= to) {
+                String p = filepath + "/" + (path.getFileName()).toString();
+                Mp3Parse parse = new Mp3Parse();
+                MusicFile m = new MusicFile();
+                m = parse.mp3extraction(p);
+                songs.add(m);
+                addArtist(m.getArtistName());
+                filenames.add(path.getFileName().toString());
+                //System.out.println(path.getFileName()+" :"+m.getArtistName());
 
-            /*List<MusicFile> list = new ArrayList<MusicFile>();
-            list = parse.chunks(m.getMusicFileExtract(), m);
-            songs.add(list);*/
+                /*List<MusicFile> list = new ArrayList<MusicFile>();
+                list = parse.chunks(m.getMusicFileExtract(), m);
+                songs.add(list);*/
+            }
         }
         stream.close();
 
-        //System.out.println("Tracks : "+songs.size());
+        System.out.println("Tracks : "+songs.size());
 
-        /*for (int i = 0; i < artists.size(); i++) {
-            BigInteger hash = MD5(artists.get(i));
-            System.out.println(hash);
-        }*/
         loadPorts("brokers1.txt");
         Publisher pub = new Publisher();
         pub.connect();
-
 
         int port = loadPorts2("Publishers1.txt");
 
@@ -111,6 +126,16 @@ public class Publisher extends Node
                 String artist = (String) dis.readObject();
                 System.out.println(artist);
 
+                ArrayList<String> art_fnames = new ArrayList<>();
+
+                for (int i = 0; i < songs.size(); i++) {
+                    if (artist.equals(songs.get(i).getArtistName())) {
+                        art_fnames.add(filenames.get(i));
+                    }
+                }
+
+                dos.writeObject(art_fnames);
+
 
             } catch (Exception e) {
                 s.close();
@@ -123,10 +148,6 @@ public class Publisher extends Node
 
         return null;
     }
-
-
-
-
 
 
     public static void loadPorts(String data) {
@@ -165,7 +186,9 @@ public class Publisher extends Node
 
         if (!artists.contains(artist)) {
             if (artist != null) {
-                artists.add(artist);
+                if (artist.length() != 0) {
+                    artists.add(artist);
+                }
             }
         }
     }

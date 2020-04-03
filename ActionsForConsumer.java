@@ -14,6 +14,9 @@ public class ActionsForConsumer extends Thread {
     private Broker b;
     private static String r;
 
+    //private static ArrayList<String> art_songs;
+
+
     public ActionsForConsumer(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT, Broker b)
     {
         this.s = s;
@@ -49,47 +52,72 @@ public class ActionsForConsumer extends Thread {
 
             if (r.equals("firstTime")) {
                 exit = (String) dis.readObject();
-                System.out.println("ELA ELA ELA ");
             }
 
             if (exit.equals("no") || r.equals("reconnect")) {
 
                 String artist = (String) dis.readObject();
-                System.out.println("Artist : " +artist);
 
-                Socket socket = null;
-                InetAddress ipp = null;
-                ObjectOutputStream out = null;
-                ObjectInputStream in = null;
+                ArrayList<String> ips = new ArrayList<String>();
+                ArrayList<Integer> ports = new ArrayList<Integer>();
+                ArrayList<BClient> bc_list = new ArrayList<>();
+                ArrayList<String> art_songs = new ArrayList<>();
+                loadPorts("Publishers2.txt", ips, ports);
 
-                try {
-                    ipp = InetAddress.getByName("192.168.1.7");
-                    socket = new Socket(ipp, 9090);
-
-                    out = new ObjectOutputStream(socket.getOutputStream());
-                    in = new ObjectInputStream(socket.getInputStream());
-
-                    out.writeObject(artist);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+                for (int i = 0; i < ips.size(); i++) {
+                    BClient bc = new BClient(ips.get(i), ports.get(i), artist, this, art_songs);
+                    bc_list.add(bc);
+                    bc.start();
                 }
-            }
 
+                for (int i = 0; i < bc_list.size(); i++) {
+                    try {
+                        bc_list.get(i).join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                dos.writeObject(art_songs);
+
+
+            }
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
 
+    public static void loadPorts(String data, ArrayList<String> brokers_ip, ArrayList<Integer> brokers_ports) {
+        File f = null;
+        BufferedReader reader = null;
+        String line;
 
+        try {
+            f = new File(data);
+        } catch (NullPointerException e) {
+            System.err.println("File not found.");
 
+        } try {
+            reader = new BufferedReader(new FileReader(f));
+        } catch (FileNotFoundException e) {
+            System.err.println("Error opening file!");
 
-        /*if (r.equals("reconnect")) {
-            stream_reconnect();
-        } else {
-            stream();
-        }*/
+        } try {
+            line = reader.readLine();
+            while(line != null){
 
+                String[] splited = line.split("\\s+");
+                String ip = splited[0];
+                int port = Integer.parseInt(splited[1]);
+                brokers_ports.add(port);
+                brokers_ip.add(ip);
+
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error!!!");
+        }
     }
 
 

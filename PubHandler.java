@@ -46,12 +46,10 @@ public class PubHandler extends Thread {
             HashMap<BigInteger, String> hash_brokers = new HashMap<>();
             hash_brokers = (HashMap<BigInteger, String>) dis.readObject();
             pub.setHash_brokers(hash_brokers);
-            //System.out.println(hash_brokers);
 
             HashMap<String, String> bl = new HashMap<>();
             bl = (HashMap<String, String>) dis.readObject();
             pub.setBroker_list(bl);
-            //System.out.println(bl);
 
             Broker b = (Broker) dis.readObject();
             if (!pub.getBrokers().contains(b)) {
