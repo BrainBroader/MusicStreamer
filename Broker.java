@@ -15,11 +15,11 @@ public class Broker extends Node {
     private static ArrayList<Integer> brokers_ports = new ArrayList<Integer>();
     private static ArrayList<String> brokers_ip = new ArrayList<String>();
     private static ArrayList<String> artists = new ArrayList<String>();
-    private static ArrayList<BigInteger> Ipp = new ArrayList<>();
-    private static ArrayList<BigInteger> h_artists = new ArrayList<>();
-    private static HashMap<BigInteger, String> hash_ip = new HashMap<>();
-    private static HashMap<BigInteger, String> hash_art = new HashMap<>();
-    private static HashMap<String, String> brokers_list = new HashMap<>();
+    private static ArrayList<BigInteger> Ipp = new ArrayList<>();  //hash(ip+port)
+    private static ArrayList<BigInteger> h_artists = new ArrayList<>();  //hash(artistName)
+    private static HashMap<BigInteger, String> hash_ip = new HashMap<>();   //hash(ip+port), ip + port
+    private static HashMap<BigInteger, String> hash_art = new HashMap<>();  //hash(artistName), artistName
+    private static HashMap<String, String> brokers_list = new HashMap<>();  //artistName, ip+port (of Broker that artistName belongs to)
     private static Queue<String> conTopub = new LinkedList<>();
     private static Queue<String> pubTocon = new LinkedList<>();
     private boolean flag = false;
@@ -61,8 +61,8 @@ public class Broker extends Node {
                     System.out.println("Assigning new thread for this publisher.");
 
                     // create a new thread object
-                    Thread t = new ActionsForPub(s, dis, dos, PORT, this);
-                    publishers.add((ActionsForPub) t);
+                    ActionsForPub t = new ActionsForPub(s, dis, dos, PORT, this);
+                    publishers.add(t);
                     // Invoking the start() method
                     t.start();
 
@@ -72,8 +72,8 @@ public class Broker extends Node {
                     System.out.println("Assigning new thread for this consumer.");
 
                     // create a new thread object
-                    Thread t2 = new ActionsForConsumer(s, dis, dos, PORT, this);
-                    consumers.add((ActionsForConsumer) t2);
+                    ActionsForConsumer t2 = new ActionsForConsumer(s, dis, dos, PORT, this);
+                    consumers.add(t2);
                     // Invoking the start() method
                     t2.start();
 
@@ -83,8 +83,8 @@ public class Broker extends Node {
                     System.out.println("Assigning new thread for this consumer.");
 
                     // create a new thread object
-                    Thread t2 = new ActionsForConsumer(s, dis, dos, PORT, this, "reconnect");
-                    consumers.add((ActionsForConsumer) t2);
+                    ActionsForConsumer t2 = new ActionsForConsumer(s, dis, dos, PORT, this, "reconnect");
+                    consumers.add(t2);
                     // Invoking the start() method
                     t2.start();
                 }

@@ -63,7 +63,7 @@ public class ActionsForConsumer extends Thread {
                 ObjectInputStream in = null;
 
                 try {
-                    ipp = InetAddress.getByName("192.168.1.12");
+                    ipp = InetAddress.getByName("192.168.1.7");
                     socket = new Socket(ipp, 9090);
 
                     out = new ObjectOutputStream(socket.getOutputStream());

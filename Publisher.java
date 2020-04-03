@@ -30,7 +30,7 @@ public class Publisher extends Node
     public static void main(String[] args) throws Exception {
 
 
-        String filepath = System.getProperty("user.dir") + "\\dataset1\\Comedy";
+        String filepath = System.getProperty("user.dir") + "\\Dataset\\dataset1\\Comedy";
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {
@@ -220,7 +220,7 @@ public class Publisher extends Node
         return port;
     }
 
-    public ArrayList<String> getArtitsList() {
+    public ArrayList<String> getArtistsList() {
         return this.artists;
     }
 

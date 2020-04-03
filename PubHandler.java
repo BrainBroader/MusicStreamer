@@ -39,14 +39,14 @@ public class PubHandler extends Thread {
             String p = "Publisher";
             dos.writeObject(p);
 
-            dos.writeObject(pub.getArtitsList());
+            dos.writeObject(pub.getArtistsList());
             dos.writeObject(pub.getBrokers_ip());
             dos.writeObject(pub.getBrokers_ports());
 
             HashMap<BigInteger, String> hash_brokers = new HashMap<>();
             hash_brokers = (HashMap<BigInteger, String>) dis.readObject();
             pub.setHash_brokers(hash_brokers);
-            //System.out.println();
+            //System.out.println(hash_brokers);
 
             HashMap<String, String> bl = new HashMap<>();
             bl = (HashMap<String, String>) dis.readObject();
@@ -82,7 +82,7 @@ public class PubHandler extends Thread {
             String p = "Publisher";
             dos.writeObject(p);
 
-            dos.writeObject(pub.getArtitsList());
+            dos.writeObject(pub.getArtitsList()); //LATHOS STO ARTISTS
             dos.writeObject(pub.getBrokers_ip());
             dos.writeObject(pub.getBrokers_ports());
 

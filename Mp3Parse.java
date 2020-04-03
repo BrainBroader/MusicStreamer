@@ -110,7 +110,7 @@ public class Mp3Parse {
 
         try {
            ArrayList<MusicFile> array = new ArrayList<MusicFile>();
-            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset1\\Comedy";
+            String filepath = "D:\\Users\\Konst\\Documents\\ΑΣΟΕΕ\\6ο Εξάμηνο\\Κατανεμημένα Συστήματα\\Εργασίες\\Εργασία 1\\MusicStreamer\\Dataset\\dataset1\\Comedy";
             Path dir = FileSystems.getDefault().getPath(filepath);
             DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
             for (Path path : stream) {
