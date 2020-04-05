@@ -23,9 +23,14 @@ public class Consumer extends Node {
         Random r = new Random();
         int number = r.nextInt(brokers_ip.size());
 
-        ConHandler con_thread = new ConHandler(brokers_ip.get(number), brokers_ports.get(number),this);
+        ConHandler con_thread = new ConHandler(brokers_ip.get(number), brokers_ports.get(number),this, brokers_ip, brokers_ports);
         con_thread.start();
 
+        try {
+            con_thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void loadPorts(String data) {

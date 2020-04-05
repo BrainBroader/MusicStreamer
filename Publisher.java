@@ -7,32 +7,49 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 // Client class 
 public class Publisher extends Node
 {
-    private static ArrayList<Broker> brokers = new ArrayList<>();
     private static ArrayList<Integer> brokers_ports = new ArrayList<>();
     private static ArrayList<String> brokers_ip = new ArrayList<>();
-    private static HashMap<BigInteger, String> hash_brokers = new HashMap<>();
+
     private static ArrayList<String> artists = new ArrayList<>();
     private static ArrayList<MusicFile> songs = new ArrayList<>();
-    private static HashMap<String, String> broker_list = new HashMap<>();
     private static ArrayList<String> filenames = new ArrayList<>();
-    private static int publishers;
-    private static String IP;
-    //private static int Brokers;
+
+    private static ArrayList<Broker> brokers = new ArrayList<>();
+    private static HashMap<BigInteger, String> hash_brokers = new HashMap<>();
+
+
+    private static ArrayList<BigInteger> h_artists = new ArrayList<>();
+    private static HashMap<BigInteger, String> hash_ip = new HashMap<>();
+    private static ArrayList<BigInteger> Ipp = new ArrayList<>();
+    private static HashMap<BigInteger, String> hash_art = new HashMap<>();
+    private static HashMap<String, String> brokers_list = new HashMap<>();
+
+    private static String Ip;
+    private static int Port;
+    private static char from;
+    private static char to;
+
+    public Publisher() {
+
+    }
+
+    public Publisher(int Port, char from, char to) {
+        this.Port = Port;
+        this.from = from;
+        this.to = to;
+    }
+
 
     public static void main(String[] args) throws Exception {
 
         System.out.print("From : ");
         Scanner keyboard = new Scanner(System.in);
         String from1 = keyboard.nextLine();
-        //System.out.println();
 
         System.out.print("To : ");
         String to1 = keyboard.nextLine();
@@ -43,9 +60,7 @@ public class Publisher extends Node
         char from = from1.charAt(0);
         char to = to1.charAt(0);
 
-
-
-        String filepath = System.getProperty("user.dir") + "\\dataset1";
+        String filepath = System.getProperty("user.dir") + "\\dataset1\\Comedy";
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {
@@ -73,10 +88,14 @@ public class Publisher extends Node
         System.out.println("Tracks : "+songs.size());
 
         loadPorts("brokers1.txt");
-        Publisher pub = new Publisher();
-        pub.connect();
-
         int port = loadPorts2("Publishers1.txt");
+
+        Publisher pub = new Publisher(port,from, to);
+
+        pub.beginHash();
+        System.out.println(brokers_list);
+
+        pub.connect();
 
         pub.openServer(port);
 
@@ -99,7 +118,6 @@ public class Publisher extends Node
                 e.printStackTrace();
             }
         }
-
     }
 
     public void openServer(int PORT) throws IOException {
@@ -123,19 +141,28 @@ public class Publisher extends Node
 
                 System.out.println("\nA new broker connected. : " + s);
 
-                String artist = (String) dis.readObject();
-                System.out.println(artist);
+                String answer = (String) dis.readObject();
 
-                ArrayList<String> art_fnames = new ArrayList<>();
+                if (answer.equals("Artist")) {
+                    String artist = (String) dis.readObject();
+                    //System.out.println(artist);
 
-                for (int i = 0; i < songs.size(); i++) {
-                    if (artist.equals(songs.get(i).getArtistName())) {
-                        art_fnames.add(filenames.get(i));
+                    ArrayList<String> art_fnames = new ArrayList<>();
+
+                    for (int i = 0; i < songs.size(); i++) {
+                        if (artist.equals(songs.get(i).getArtistName())) {
+                            art_fnames.add(filenames.get(i));
+                        }
                     }
+
+                    dos.writeObject(art_fnames);
+
+                } else if (answer.equals("Song")) {
+
+                    String song_name = (String) dis.readObject();
+                    push(song_name, dis, dos);
+
                 }
-
-                dos.writeObject(art_fnames);
-
 
             } catch (Exception e) {
                 s.close();
@@ -144,9 +171,127 @@ public class Publisher extends Node
         }
     }
 
-    public Broker hashTpoic(String artistName) {
+    public void push(String song_name, ObjectInputStream dis, ObjectOutputStream dos) throws IOException {
 
-        return null;
+        String sn = song_name.toLowerCase();
+        System.out.println(sn);
+        char song = sn.charAt(0);
+
+        if (song >= this.from && song <= this.to) {
+            List<MusicFile> list = new ArrayList<MusicFile>();
+            MusicFile music = new MusicFile();
+            Mp3Parse parse = new Mp3Parse();
+
+            for (int i = 0; i < filenames.size(); i++) {
+                if (filenames.get(i).equals(song_name)) {
+                    music = songs.get(i);
+                    list = parse.chunks(music.getMusicFileExtract(), music);
+                }
+            }
+            music.printTrack();
+            System.out.println("chunks : "+ list.size());
+
+            byte[] be = new byte[0];
+            music.setMusicFileExtract(be);
+            music.printTrack();
+
+            dos.writeObject(music);
+            dos.writeObject(list.size());
+
+
+            /*for (int i = 0; i < list.size(); i++) {
+                dos.writeObject(list.get(i));
+            }*/
+        }
+    }
+
+    public void beginHash() throws IOException {
+
+        //iportName = MD5(getIP() + Integer.toString(port));
+
+        for (int i=0;i < brokers_ip.size();i++) {
+            Ipp.add(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))));
+            hash_ip.put(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))), brokers_ip.get(i) + " " +Integer.toString(brokers_ports.get(i)));
+        }
+
+        Collections.sort(Ipp);
+
+        for (int j=0; j < artists.size(); j++) {
+            h_artists.add(MD5(artists.get(j)));
+            hash_art.put(MD5(artists.get(j)), artists.get(j));
+        }
+
+        Collections.sort(h_artists);
+
+        for (int i = 0; i < h_artists.size(); i++) {
+            BigInteger broker = findBroker(h_artists.get(i));
+
+            String artist = hash_art.get(h_artists.get(i));
+            String br = hash_ip.get(broker);
+
+            brokers_list.put(artist, br);
+        }
+        //System.out.println(brokers_list);
+
+    }
+
+
+    //Finds in which Broker this
+    public BigInteger findBroker(BigInteger artist) {
+
+        BigInteger big = BigInteger.valueOf(0);
+
+
+        for (int j = (Ipp.size() - 1); j >= 0; j--) {
+            if ((j == (Ipp.size() - 1)) && (artist.compareTo(Ipp.get(j)) > 0)) {
+                artist = artist.mod(Ipp.get(j));
+            }
+
+            if (j != 0) {
+                if ((artist.compareTo(Ipp.get(j)) < 0) && (artist.compareTo(Ipp.get(j - 1)) > 0)) {
+                    big = Ipp.get(j);
+                    return big;
+                }
+            } else {
+                if (artist.compareTo(Ipp.get(j)) < 0) {
+                    big = Ipp.get(j);
+                    return big;
+                }
+            }
+        }
+        return big;
+    }
+
+    //hash Algorithm
+    public static BigInteger MD5(String input)
+    {
+        try {
+
+            // Static getInstance method is called with hashing MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // digest() method is called to calculate message digest
+            //  of an input digest() return array of byte
+            byte[] messageDigest = md.digest(input.getBytes());
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            return no;
+        }
+
+        // For specifying wrong message digest algorithms
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getIP() throws IOException {
+        try (final DatagramSocket socket = new DatagramSocket()) {
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            String IP = socket.getLocalAddress().getHostAddress();
+            return IP;
+        }
     }
 
 
@@ -243,10 +388,6 @@ public class Publisher extends Node
         return port;
     }
 
-    public ArrayList<String> getArtistsList() {
-        return this.artists;
-    }
-
     public ArrayList<String> getBrokers_ip() {
         return this.brokers_ip;
     }
@@ -255,8 +396,8 @@ public class Publisher extends Node
         return this.brokers_ports;
     }
 
-    public void setBroker_list(HashMap<String, String> broker_list) {
-        this.broker_list = broker_list;
+    public ArrayList<String> getArtistsList() {
+        return this.artists;
     }
 
     public ArrayList<String> getFilenames() {
@@ -267,13 +408,11 @@ public class Publisher extends Node
         return this.songs;
     }
 
-    public void incrPub() {
-         this.publishers++;
-    }
 
     public void setHash_brokers(HashMap<BigInteger, String> hash_brokers) {
         this.hash_brokers = hash_brokers;
     }
+
     public ArrayList<Broker> getBrokers() {
         return this.brokers;
     }
@@ -281,4 +420,20 @@ public class Publisher extends Node
     public void addBrokers(Broker broker) {
         this.brokers.add(broker);
     }
-} 
+
+    public HashMap<String, String> getBrokers_list() {
+        return this.brokers_list;
+    }
+
+    public int getPort() {
+        return this.Port;
+    }
+
+    public char getFrom() {
+        return this.from;
+    }
+
+    public char getTo() {
+        return this.to;
+    }
+}

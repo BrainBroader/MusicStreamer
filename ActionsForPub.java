@@ -1,8 +1,6 @@
 import java.io.*; 
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 
 class ActionsForPub extends Thread
 {
@@ -24,13 +22,13 @@ class ActionsForPub extends Thread
     } 
   
     @Override
-    public synchronized void run() {
+    public void run() {
 
         try {
 
             ArrayList<String> artists = new ArrayList<>();
             artists = (ArrayList<String>) dis.readObject();
-            b.addArtist(artists);
+            b.saveArtists(artists);
 
             ArrayList<String> ips = new ArrayList<>();
             ips = (ArrayList<String>) dis.readObject();
@@ -40,10 +38,17 @@ class ActionsForPub extends Thread
             ports = (ArrayList<Integer>) dis.readObject();
             b.setBrokers_ports(ports);
 
+            HashMap<String, String> bl = new HashMap<>();
+            bl = (HashMap<String, String>) dis.readObject();
 
-            b.beginHash();
-            dos.writeObject(b.getHash_ip());
-            dos.writeObject(b.getBrokers_list());
+
+            for (Map.Entry me : bl.entrySet()) {
+                b.putBroker_list((String)me.getKey(), (String)me.getValue());
+                //System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
+            }
+
+            Publisher p = (Publisher) dis.readObject();
+            b.addPublisher(p);
 
             dos.writeObject(b);
 
@@ -54,6 +59,13 @@ class ActionsForPub extends Thread
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                dis.close();
+                dos.close();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
     }
 

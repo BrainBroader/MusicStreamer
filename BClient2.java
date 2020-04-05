@@ -6,25 +6,26 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-public class BClient extends Thread {
+public class BClient2 extends Thread {
 
     private String IP;
     private int PORT;
-    private String artist;
+    private String song;
     private ActionsForConsumer actions;
-    private static ArrayList<String> a_songs;
+    private ArrayList<MusicFile> musfile;
+    private int chunkSize;
 
-    public BClient(String IP, int PORT, String artist, ActionsForConsumer actions, ArrayList<String> a_songs) {
+    public BClient2(String IP, int PORT, String song, ActionsForConsumer actions, ArrayList<MusicFile> musfile, int chunkSize) {
         this.IP = IP;
         this.PORT = PORT;
-        this.artist = artist;
+        this.song = song;
         this.actions = actions;
-        this.a_songs = a_songs;
+        this.musfile = musfile;
+        this.chunkSize = chunkSize;
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         Socket s = null;
         InetAddress ip = null;
         ObjectOutputStream dos = null;
@@ -37,15 +38,29 @@ public class BClient extends Thread {
             dos = new ObjectOutputStream(s.getOutputStream());
             dis = new ObjectInputStream(s.getInputStream());
 
-            dos.writeObject("Artist");
-            dos.writeObject(this.artist);
+            dos.writeObject("Song");
+            dos.writeObject(this.song);
 
-            ArrayList<String> art_list = new ArrayList<>();
-            art_list = (ArrayList<String>) dis.readObject();
+            MusicFile msong = new MusicFile();
+            msong = (MusicFile) dis.readObject();
+            msong.printTrack();
 
-            for (int i = 0; i < art_list.size(); i++) {
-                a_songs.add(art_list.get(i));
+
+            musfile.add(msong);
+
+
+            int chunks_size = (int) dis.readObject();
+
+            if (chunks_size != 0) {
+                chunkSize = chunks_size;
             }
+
+
+            /*for (int i = 0; i < chunks_size; i++) {
+                byte[] chunk = (byte[]) dis.readObject();
+                this.actions.getB().addQueue(chunk);
+            }*/
+
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -63,9 +78,4 @@ public class BClient extends Thread {
             }
         }
     }
-
-
-
-
-
 }

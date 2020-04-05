@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -40,12 +41,14 @@ public class ActionsForConsumer extends Thread {
 
 
     @Override
-    public synchronized void run()
+    public void run()
     {
         try {
             if (r.equals("firstTime")) {
                 dos.writeObject(b.getBrokers_list());
-                dos.writeObject(b.getArtists());
+
+                ArrayList<String> a = b.removeDuplicates(b.getArtists());
+                dos.writeObject(a);
             }
 
             String exit = "";
@@ -77,15 +80,52 @@ public class ActionsForConsumer extends Thread {
                         e.printStackTrace();
                     }
                 }
-
+                //System.out.println("eeeeeeeeeeeeeeeeeee"+art_songs.size());
                 dos.writeObject(art_songs);
 
+                ArrayList<BClient> bc2_list = new ArrayList<>();
+                String song_name = (String) dis.readObject();
+                System.out.println(song_name);
+
+                ArrayList<MusicFile> musfile = new ArrayList<>();
+                int chunk_size = 0;
+
+                for (int i = 0; i < ips.size(); i++) {
+                    BClient2 bc2 = new BClient2(ips.get(i), ports.get(i), song_name, this, musfile, chunk_size);
+                    bc2.start();
+                }
+
+                for (int i = 0; i < bc2_list.size(); i++) {
+                    try {
+                        bc2_list.get(i).join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                MusicFile track = new MusicFile();
+                for (int i = 0; i < musfile.size(); i++) {
+                    if (musfile.get(i) != null) {
+                        track = musfile.get(i);
+                    }
+                }
+                System.out.println("size "+musfile.size());
+                dos.writeObject(track);
+                dos.writeObject(chunk_size);
+
+
+                for (int i = 0; i < chunk_size; i++) {
+                    dos.writeObject(b.getQueue().remove());
+                }
 
             }
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public Broker getB() {
+        return this.b;
     }
 
     public static void loadPorts(String data, ArrayList<String> brokers_ip, ArrayList<Integer> brokers_ports) {
@@ -139,7 +179,7 @@ public class ActionsForConsumer extends Thread {
         }
     }*/
 
-    public synchronized void stream_reconnect() {
+    /*public synchronized void stream_reconnect() {
 
         Socket s = null;
         InetAddress ip = null;
@@ -152,18 +192,6 @@ public class ActionsForConsumer extends Thread {
             System.out.println("Artist : " +artist);
 
 
-
-            /*while (b.getFlag()) {
-                try {
-                    b.send();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //System.out.println("b.getFlag()");
-            }
-            (b.getConTopub()).add(artist);
-            b.setFlag(true);
-            b.arrive();
 
             while (!b.getFlag2()) {
                 try {
@@ -183,7 +211,7 @@ public class ActionsForConsumer extends Thread {
 
             dos.writeObject(list);
             b.setFlag2(false);
-            b.arrive();*/
+            b.arrive();
 
 
 
@@ -191,10 +219,10 @@ public class ActionsForConsumer extends Thread {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } /*catch (InterruptedException e) {
+        }catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
-    }
+        }
+    }*/
 
 
 

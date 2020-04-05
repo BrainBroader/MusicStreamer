@@ -22,7 +22,7 @@ public class PubHandler extends Thread {
 
 
     @Override
-    public synchronized void run()
+    public void run()
     {
         Socket s = null;
         InetAddress ip = null;
@@ -42,14 +42,9 @@ public class PubHandler extends Thread {
             dos.writeObject(pub.getArtistsList());
             dos.writeObject(pub.getBrokers_ip());
             dos.writeObject(pub.getBrokers_ports());
+            dos.writeObject(pub.getBrokers_list());
 
-            HashMap<BigInteger, String> hash_brokers = new HashMap<>();
-            hash_brokers = (HashMap<BigInteger, String>) dis.readObject();
-            pub.setHash_brokers(hash_brokers);
-
-            HashMap<String, String> bl = new HashMap<>();
-            bl = (HashMap<String, String>) dis.readObject();
-            pub.setBroker_list(bl);
+            dos.writeObject(pub);
 
             Broker b = (Broker) dis.readObject();
             if (!pub.getBrokers().contains(b)) {
