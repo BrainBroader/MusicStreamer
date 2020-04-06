@@ -41,16 +41,23 @@ class ActionsForPub extends Thread
             HashMap<String, String> bl = new HashMap<>();
             bl = (HashMap<String, String>) dis.readObject();
 
-
             for (Map.Entry me : bl.entrySet()) {
                 b.putBroker_list((String)me.getKey(), (String)me.getValue());
                 //System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
             }
 
-            Publisher p = (Publisher) dis.readObject();
+            HashMap<ArrayList<String>, String> ps = new HashMap<>();
+            ps = (HashMap<ArrayList<String>, String>) dis.readObject();
+
+            for (Map.Entry m : ps.entrySet()) {
+                b.addPub_servers((ArrayList<String>)m.getKey(), (String)m.getValue());
+                //System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
+            }
+
+            /*Publisher p = (Publisher) dis.readObject();
             b.addPublisher(p);
 
-            dos.writeObject(b);
+            dos.writeObject(b);*/
 
             System.out.println("Closing...");
             System.out.println("Connection closed");

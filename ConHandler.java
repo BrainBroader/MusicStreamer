@@ -96,6 +96,7 @@ public class ConHandler extends Thread {
                     dos.writeObject(exit);
                 }
                 dos.writeObject(inputString);
+                System.out.println(inputString);
 
                 ArrayList<String> list = (ArrayList<String>) dis.readObject();
 
@@ -108,6 +109,7 @@ public class ConHandler extends Thread {
 
                 input_song = list.get(Integer.parseInt(input_song) - 1);
                 System.out.println(input_song);
+                System.out.println("----------------------------------------");
 
                 dos.writeObject(input_song);
 
@@ -124,6 +126,7 @@ public class ConHandler extends Thread {
 
                 music_file.printTrack();
                 System.out.println("chunks : "+chunk_size);
+                System.out.println();
 
 
             }

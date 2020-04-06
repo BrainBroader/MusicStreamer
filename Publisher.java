@@ -29,6 +29,8 @@ public class Publisher extends Node
     private static HashMap<BigInteger, String> hash_art = new HashMap<>();
     private static HashMap<String, String> brokers_list = new HashMap<>();
 
+    private static HashMap<ArrayList<String>, String> pub_server = new HashMap<>();
+
     private static String Ip;
     private static int Port;
     private static char from;
@@ -64,33 +66,39 @@ public class Publisher extends Node
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {
-            String name = (path.getFileName().toString());
-            name = name.toLowerCase();
-            char letter = name.charAt(0);
 
-            if(letter >= from && letter <= to) {
-                String p = filepath + "/" + (path.getFileName()).toString();
-                Mp3Parse parse = new Mp3Parse();
-                MusicFile m = new MusicFile();
-                m = parse.mp3extraction(p);
-                songs.add(m);
-                addArtist(m.getArtistName());
-                filenames.add(path.getFileName().toString());
-                //System.out.println(path.getFileName()+" :"+m.getArtistName());
+            String p = filepath + "/" + (path.getFileName()).toString();
+            Mp3Parse parse = new Mp3Parse();
+            MusicFile m = new MusicFile();
+            m = parse.mp3extraction(p);
 
-                /*List<MusicFile> list = new ArrayList<MusicFile>();
-                list = parse.chunks(m.getMusicFileExtract(), m);
-                songs.add(list);*/
+            String name = m.getArtistName();
+            if (name != null && name.length() != 0) {
+                String name1 = name.toLowerCase();
+                char letter = name1.charAt(0);
+
+                if (letter >= from && letter <= to) {
+                    songs.add(m);
+                    addArtist(m.getArtistName());
+                    filenames.add(path.getFileName().toString());
+                    //System.out.println(path.getFileName()+" :"+m.getArtistName());
+
+                }
             }
         }
         stream.close();
 
         System.out.println("Tracks : "+songs.size());
 
+
         loadPorts("brokers1.txt");
         int port = loadPorts2("Publishers1.txt");
 
         Publisher pub = new Publisher(port,from, to);
+
+        String iport = pub.getIP() + " " +Integer.toString(port);
+        pub_server.put(artists, iport);
+
 
         pub.beginHash();
         System.out.println(brokers_list);
@@ -141,28 +149,10 @@ public class Publisher extends Node
 
                 System.out.println("\nA new broker connected. : " + s);
 
-                String answer = (String) dis.readObject();
+                PubServer server = new PubServer(s, dis, dos, PORT, this);
+                server.start();
 
-                if (answer.equals("Artist")) {
-                    String artist = (String) dis.readObject();
-                    //System.out.println(artist);
 
-                    ArrayList<String> art_fnames = new ArrayList<>();
-
-                    for (int i = 0; i < songs.size(); i++) {
-                        if (artist.equals(songs.get(i).getArtistName())) {
-                            art_fnames.add(filenames.get(i));
-                        }
-                    }
-
-                    dos.writeObject(art_fnames);
-
-                } else if (answer.equals("Song")) {
-
-                    String song_name = (String) dis.readObject();
-                    push(song_name, dis, dos);
-
-                }
 
             } catch (Exception e) {
                 s.close();
@@ -173,36 +163,8 @@ public class Publisher extends Node
 
     public void push(String song_name, ObjectInputStream dis, ObjectOutputStream dos) throws IOException {
 
-        String sn = song_name.toLowerCase();
-        System.out.println(sn);
-        char song = sn.charAt(0);
-
-        if (song >= this.from && song <= this.to) {
-            List<MusicFile> list = new ArrayList<MusicFile>();
-            MusicFile music = new MusicFile();
-            Mp3Parse parse = new Mp3Parse();
-
-            for (int i = 0; i < filenames.size(); i++) {
-                if (filenames.get(i).equals(song_name)) {
-                    music = songs.get(i);
-                    list = parse.chunks(music.getMusicFileExtract(), music);
-                }
-            }
-            music.printTrack();
-            System.out.println("chunks : "+ list.size());
-
-            byte[] be = new byte[0];
-            music.setMusicFileExtract(be);
-            music.printTrack();
-
-            dos.writeObject(music);
-            dos.writeObject(list.size());
 
 
-            /*for (int i = 0; i < list.size(); i++) {
-                dos.writeObject(list.get(i));
-            }*/
-        }
     }
 
     public void beginHash() throws IOException {
@@ -436,4 +398,9 @@ public class Publisher extends Node
     public char getTo() {
         return this.to;
     }
+
+    public HashMap<ArrayList<String>, String> getPub_server() {
+        return this.pub_server;
+    }
+
 }

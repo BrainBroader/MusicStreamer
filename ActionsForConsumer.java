@@ -3,6 +3,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -46,9 +47,7 @@ public class ActionsForConsumer extends Thread {
         try {
             if (r.equals("firstTime")) {
                 dos.writeObject(b.getBrokers_list());
-
-                ArrayList<String> a = b.removeDuplicates(b.getArtists());
-                dos.writeObject(a);
+                dos.writeObject(b.getArtists());
             }
 
             String exit = "";
@@ -61,61 +60,70 @@ public class ActionsForConsumer extends Thread {
 
                 String artist = (String) dis.readObject();
 
-                ArrayList<String> ips = new ArrayList<String>();
-                ArrayList<Integer> ports = new ArrayList<Integer>();
-                ArrayList<BClient> bc_list = new ArrayList<>();
+                ArrayList<String> ips = new ArrayList<>();
+                ArrayList<Integer> ports = new ArrayList<>();
                 ArrayList<String> art_songs = new ArrayList<>();
                 loadPorts("Publishers2.txt", ips, ports);
+                String iport = "";
 
-                for (int i = 0; i < ips.size(); i++) {
-                    BClient bc = new BClient(ips.get(i), ports.get(i), artist, this, art_songs);
-                    bc_list.add(bc);
-                    bc.start();
-                }
-
-                for (int i = 0; i < bc_list.size(); i++) {
-                    try {
-                        bc_list.get(i).join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                for (Map.Entry m : b.getPub_servers().entrySet()) {
+                    ArrayList<String> server = (ArrayList<String>)m.getKey();
+                    for (int i = 0; i < server.size(); i++) {
+                        if (artist.equals(server.get(i))) {
+                            iport = (String)m.getValue();
+                        }
                     }
                 }
-                //System.out.println("eeeeeeeeeeeeeeeeeee"+art_songs.size());
-                dos.writeObject(art_songs);
 
-                ArrayList<BClient> bc2_list = new ArrayList<>();
+                String[] splited = iport.split("\\s+");
+
+                Socket socket = null;
+                InetAddress ip = null;
+                ObjectOutputStream out = null;
+                ObjectInputStream in = null;
+
+
+                ip = InetAddress.getByName(splited[0]);
+                socket = new Socket(ip, Integer.parseInt(splited[1]));
+
+                out = new ObjectOutputStream(socket.getOutputStream());
+                in = new ObjectInputStream(socket.getInputStream());
+
+                out.writeObject(artist);
+
+
+                ArrayList<String> art_list = new ArrayList<>();
+                art_list = (ArrayList<String>) in.readObject();
+
+                for (int i = 0; i < art_list.size(); i++) {
+                    art_songs.add(art_list.get(i));
+                }
+
+                dos.writeObject(art_songs);
+                //System.out.println("eeeeeeeeeeeeeeeeeee"+art_songs.size());
+
+
                 String song_name = (String) dis.readObject();
                 System.out.println(song_name);
 
-                ArrayList<MusicFile> musfile = new ArrayList<>();
-                int chunk_size = 0;
+                out.writeObject(song_name);
 
-                for (int i = 0; i < ips.size(); i++) {
-                    BClient2 bc2 = new BClient2(ips.get(i), ports.get(i), song_name, this, musfile, chunk_size);
-                    bc2.start();
-                }
+                MusicFile mus = (MusicFile) in.readObject();
+                int chunks_size = (int) in.readObject();
 
-                for (int i = 0; i < bc2_list.size(); i++) {
-                    try {
-                        bc2_list.get(i).join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                MusicFile track = new MusicFile();
-                for (int i = 0; i < musfile.size(); i++) {
-                    if (musfile.get(i) != null) {
-                        track = musfile.get(i);
-                    }
-                }
-                System.out.println("size "+musfile.size());
-                dos.writeObject(track);
-                dos.writeObject(chunk_size);
+                //mus.printTrack();
+                dos.writeObject(mus);
+                dos.writeObject(chunks_size);
+
+                /*for (int i = 0; i < chunks_size; i++) {
+                    byte[] chunk = (byte[]) dis.readObject();
+                    this.actions.getB().addQueue(chunk);
+                }*/
 
 
-                for (int i = 0; i < chunk_size; i++) {
+                /*for (int i = 0; i < chunk_size; i++) {
                     dos.writeObject(b.getQueue().remove());
-                }
+                }*/
 
             }
 

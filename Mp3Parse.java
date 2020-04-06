@@ -109,7 +109,7 @@ public class Mp3Parse {
     {
 
         try {
-           ArrayList<MusicFile> array = new ArrayList<MusicFile>();
+            /*ArrayList<MusicFile> array = new ArrayList<>();
             String filepath = "D:\\Users\\Konst\\Documents\\ΑΣΟΕΕ\\6ο Εξάμηνο\\Κατανεμημένα Συστήματα\\Εργασίες\\Εργασία 1\\MusicStreamer\\Dataset\\dataset1\\Comedy";
             Path dir = FileSystems.getDefault().getPath(filepath);
             DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
@@ -127,9 +127,9 @@ public class Mp3Parse {
             }
             stream.close();
 
-            System.out.println(array.size());
+            System.out.println(array.size());*/
 
-            /*String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset2\\Adventure.mp3";
+            String filepath = "D:\\ΓΙΩΡΓΟΣ ΣΥΜΕΩΝΙΔΗΣ\\Documents\\6ο ΕΞΑΜΗΝΟ\\ΚΑΤΑΝΕΜΗΜΕΝΑ ΣΥΣΤΗΜΑΤΑ\\GitHub\\dataset1\\Comedy\\Night in the Castle.mp3";
             MusicFile m = new MusicFile();
             m = mp3extraction(filepath);
             m.printTrack();

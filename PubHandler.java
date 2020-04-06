@@ -43,13 +43,14 @@ public class PubHandler extends Thread {
             dos.writeObject(pub.getBrokers_ip());
             dos.writeObject(pub.getBrokers_ports());
             dos.writeObject(pub.getBrokers_list());
+            dos.writeObject(pub.getPub_server());
 
-            dos.writeObject(pub);
+            /*dos.writeObject(pub);
 
             Broker b = (Broker) dis.readObject();
             if (!pub.getBrokers().contains(b)) {
                 pub.addBrokers(b);
-            }
+            }*/
 
 
             s.close();
@@ -58,8 +59,6 @@ public class PubHandler extends Thread {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

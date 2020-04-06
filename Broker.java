@@ -21,6 +21,7 @@ public class Broker extends Node {
     private static ArrayList<String> brokers_ip = new ArrayList<>();
 
     private static HashMap<String, String> brokers_list = new HashMap<>();
+    private static HashMap<ArrayList<String>, String> pub_servers = new HashMap<>();
 
     private static Queue<byte[]> queue = new LinkedList<>();
 
@@ -247,5 +248,13 @@ public class Broker extends Node {
 
     public void addQueue(byte[] e) {
         this.queue.add(e);
+    }
+
+    public void addPub_servers(ArrayList<String> list, String name) {
+        this.pub_servers.put(list,name);
+    }
+
+    public HashMap<ArrayList<String>, String> getPub_servers() {
+        return this.pub_servers;
     }
 }

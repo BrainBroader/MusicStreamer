@@ -7,7 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-public class Node implements Serializable {
+public class Node extends Thread {
 
     //List<Broker> brokers;
 
