@@ -56,6 +56,12 @@ public class ConHandler extends Thread {
             ArrayList<String> artists = new ArrayList<>();
             artists = (ArrayList<String>) dis.readObject();
 
+            ArrayList<String> keyboard = new ArrayList<>();
+            for (int i = 1; i <= artists.size(); i++) {
+                keyboard.add(String.valueOf(i));
+            }
+            keyboard.add("exit");
+
             while(true) {
 
                 for (int i = 0; i < artists.size(); i++) {
@@ -65,6 +71,13 @@ public class ConHandler extends Thread {
                 System.out.println("Choose an number...");
                 Scanner scanner = new Scanner(System.in);
                 String inputString = scanner.nextLine();
+
+
+                while (!keyboard.contains(inputString)) {
+                    System.out.println("This artist doesn't exist.");
+                    System.out.println("Please try again");
+                    inputString = scanner.nextLine();
+                }
 
                 if (inputString.equals("exit")) {
                     break;
@@ -99,13 +112,26 @@ public class ConHandler extends Thread {
                 System.out.println(inputString);
 
                 ArrayList<String> list = (ArrayList<String>) dis.readObject();
+                ArrayList<String> keyboard2 = new ArrayList<>();
+                keyboard2.add("exit");
 
                 for (int i = 0; i < list.size(); i++) {
                     System.out.println((i + 1) + ". " + list.get(i));
+                    keyboard2.add(String.valueOf(i+1));
                 }
 
                 System.out.println("Choose song's number...");
                 String input_song = scanner.nextLine();
+
+                while (!keyboard2.contains(input_song)) {
+                    System.out.println("This song doesn't exist.");
+                    System.out.println("Please try again");
+                    input_song = scanner.nextLine();
+                }
+
+                if (input_song.equals("exit")) {
+                    break;
+                }
 
                 input_song = list.get(Integer.parseInt(input_song) - 1);
                 System.out.println(input_song);
