@@ -33,36 +33,37 @@ public class ConHandler extends Thread {
         Socket s = null;
         ObjectOutputStream dos = null;
         ObjectInputStream dis = null;
-        try
-        {
-            ip = InetAddress.getByName(IP);
 
-            s = new Socket(ip, PORT);
+        while (true) {
 
-            dos = new ObjectOutputStream(s.getOutputStream());
-            dis = new ObjectInputStream(s.getInputStream());
+            try {
+                ip = InetAddress.getByName(IP);
 
+                s = new Socket(ip, PORT);
 
-            String p = "Consumer";
-            dos.writeObject(p);
+                dos = new ObjectOutputStream(s.getOutputStream());
+                dis = new ObjectInputStream(s.getInputStream());
 
 
-            HashMap<String, String> bl = new HashMap<>();
-            bl = (HashMap<String, String>) dis.readObject();
-            consumer.setBroker_list(bl);
+                String p = "Consumer";
+                dos.writeObject(p);
 
-            System.out.println(bl);
 
-            ArrayList<String> artists = new ArrayList<>();
-            artists = (ArrayList<String>) dis.readObject();
+                HashMap<String, String> bl = new HashMap<>();
+                bl = (HashMap<String, String>) dis.readObject();
+                consumer.setBroker_list(bl);
 
-            ArrayList<String> keyboard = new ArrayList<>();
-            for (int i = 1; i <= artists.size(); i++) {
-                keyboard.add(String.valueOf(i));
-            }
-            keyboard.add("exit");
+                System.out.println(bl);
 
-            while(true) {
+                ArrayList<String> artists = new ArrayList<>();
+                artists = (ArrayList<String>) dis.readObject();
+
+                ArrayList<String> keyboard = new ArrayList<>();
+                for (int i = 1; i <= artists.size(); i++) {
+                    keyboard.add(String.valueOf(i));
+                }
+                keyboard.add("exit");
+
 
                 for (int i = 0; i < artists.size(); i++) {
                     System.out.println(i + 1 + ". " + artists.get(i));
@@ -109,7 +110,7 @@ public class ConHandler extends Thread {
                     dos.writeObject(exit);
                 }
                 dos.writeObject(inputString);
-                System.out.println("1. sending "+inputString);
+                System.out.println("1. sending " + inputString);
 
                 ArrayList<String> list = (ArrayList<String>) dis.readObject();
                 System.out.println("8. arrived");
@@ -118,7 +119,7 @@ public class ConHandler extends Thread {
 
                 for (int i = 0; i < list.size(); i++) {
                     System.out.println((i + 1) + ". " + list.get(i));
-                    keyboard2.add(String.valueOf(i+1));
+                    keyboard2.add(String.valueOf(i + 1));
                 }
 
                 System.out.println("Choose song's number...");
@@ -139,7 +140,7 @@ public class ConHandler extends Thread {
                 System.out.println("----------------------------------------");
 
                 dos.writeObject(input_song);
-                System.out.println("9. sending "+input_song);
+                System.out.println("9. sending " + input_song);
 
                 MusicFile music_file = new MusicFile();
                 music_file = (MusicFile) dis.readObject();
@@ -148,23 +149,23 @@ public class ConHandler extends Thread {
                 System.out.println("19. arrived. tags ");
                 System.out.println("20. arrived chunks ");
 
-                /*ArrayList<byte[]> c = new ArrayList<>();
-                for (int i = 0; i < chunk_size; i++) {
-                    byte[] chunk = (byte[]) dis.readObject();
-                    c.add(chunk);
-                }*/
+            /*ArrayList<byte[]> c = new ArrayList<>();
+            for (int i = 0; i < chunk_size; i++) {
+                byte[] chunk = (byte[]) dis.readObject();
+                c.add(chunk);
+            }*/
 
                 music_file.printTrack();
-                System.out.println("chunks : "+chunk_size);
+                System.out.println("chunks : " + chunk_size);
                 System.out.println();
 
 
+                dis.close();
+                dos.close();
+                s.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            dis.close();
-            dos.close();
-        }catch(Exception e){
-            e.printStackTrace();
         }
 
     }
