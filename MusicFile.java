@@ -62,7 +62,7 @@ public class MusicFile implements Serializable {
     }
 
     public void printTrack() {
-        System.out.println("Title: " + getTrackName() + "\nArtist: " + getArtistName() + "\nAlbum: " + getAlbumInfo() + "\nGenre: " + getGenre()+ "\n" + getMusicFileExtract().length + " byte");
+        System.out.println("Title: " + getTrackName() + "\nArtist: " + getArtistName() + "\nAlbum: " + getAlbumInfo() + "\nGenre: " + getGenre());
         System.out.println("----------------------------------------");
     }
 

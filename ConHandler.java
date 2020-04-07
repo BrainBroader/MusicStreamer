@@ -109,9 +109,10 @@ public class ConHandler extends Thread {
                     dos.writeObject(exit);
                 }
                 dos.writeObject(inputString);
-                System.out.println(inputString);
+                System.out.println("1. sending "+inputString);
 
                 ArrayList<String> list = (ArrayList<String>) dis.readObject();
+                System.out.println("8. arrived");
                 ArrayList<String> keyboard2 = new ArrayList<>();
                 keyboard2.add("exit");
 
@@ -138,11 +139,14 @@ public class ConHandler extends Thread {
                 System.out.println("----------------------------------------");
 
                 dos.writeObject(input_song);
+                System.out.println("9. sending "+input_song);
 
                 MusicFile music_file = new MusicFile();
                 music_file = (MusicFile) dis.readObject();
 
                 int chunk_size = (int) dis.readObject();
+                System.out.println("19. arrived. tags ");
+                System.out.println("20. arrived chunks ");
 
                 /*ArrayList<byte[]> c = new ArrayList<>();
                 for (int i = 0; i < chunk_size; i++) {

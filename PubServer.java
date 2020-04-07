@@ -36,7 +36,7 @@ public class PubServer extends Thread {
         try {
 
             String artist = (String) dis.readObject();
-
+            System.out.println("4. received "+artist);
 
             ArrayList<String> art_fnames = new ArrayList<>();
 
@@ -47,10 +47,12 @@ public class PubServer extends Thread {
             }
 
             dos.writeObject(art_fnames);
+            System.out.println("5. sending "+art_fnames);
 
 
             ////////////////////////////////////////////
             String song_name = (String) dis.readObject();
+            System.out.println("12. received "+song_name);
 
             int j;
 
@@ -60,28 +62,20 @@ public class PubServer extends Thread {
                 }
             }
 
-
-            List<MusicFile> list = new ArrayList<>();
             MusicFile music = new MusicFile();
             Mp3Parse parse = new Mp3Parse();
 
-            String sn = song_name.toLowerCase();
-            //System.out.println(song_name);
-            char song = sn.charAt(0);
+            music.setTrackName(p.getSongs().get(j).getTrackName());
+            music.setArtistName(p.getSongs().get(j).getArtistName());
+            music.setAlbumInfo(p.getSongs().get(j).getAlbumInfo());
+            music.setGenre(p.getSongs().get(j).getGenre());
 
-            music = p.getSongs().get(j);
-            list = parse.chunks(music.getMusicFileExtract(), music);
-
-
-            //music.printTrack();
-            System.out.println("chunks : " + list.size());
-
-            byte[] be = new byte[0];
-            music.setMusicFileExtract(be);
-            //music.printTrack();
+            List<MusicFile> list = parse.chunks(p.getSongs().get(j).getMusicFileExtract(), p.getSongs().get(j));
 
             dos.writeObject(music);
             dos.writeObject(list.size());
+            System.out.println("13. sending tags: "+music);
+            System.out.println("14. sendings chunks: "+list.size());
 
 
             /*for (int i = 0; i < list.size(); i++) {

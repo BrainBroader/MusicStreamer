@@ -59,6 +59,7 @@ public class ActionsForConsumer extends Thread {
             if (exit.equals("no") || r.equals("reconnect")) {
 
                 String artist = (String) dis.readObject();
+                System.out.println("2. received "+artist);
 
                 ArrayList<String> ips = new ArrayList<>();
                 ArrayList<Integer> ports = new ArrayList<>();
@@ -90,30 +91,37 @@ public class ActionsForConsumer extends Thread {
                 in = new ObjectInputStream(socket.getInputStream());
 
                 out.writeObject(artist);
-
+                System.out.println("3. sending "+ artist);
 
                 ArrayList<String> art_list = new ArrayList<>();
                 art_list = (ArrayList<String>) in.readObject();
+                System.out.println("6. received "+art_list);
 
                 for (int i = 0; i < art_list.size(); i++) {
                     art_songs.add(art_list.get(i));
                 }
 
                 dos.writeObject(art_songs);
-                //System.out.println("eeeeeeeeeeeeeeeeeee"+art_songs.size());
+                System.out.println("7. sending "+art_songs);
 
 
                 String song_name = (String) dis.readObject();
+                System.out.println("10. received "+song_name );
                 System.out.println(song_name);
 
                 out.writeObject(song_name);
+                System.out.println("11. sending "+song_name );
 
                 MusicFile mus = (MusicFile) in.readObject();
                 int chunks_size = (int) in.readObject();
+                System.out.println("15. received tags: "+mus);
+                System.out.println("16. sendings chunks: "+chunks_size);
 
                 //mus.printTrack();
                 dos.writeObject(mus);
                 dos.writeObject(chunks_size);
+                System.out.println("17. sending tags: "+mus);
+                System.out.println("18. sendings chunks: "+chunks_size);
 
                 /*for (int i = 0; i < chunks_size; i++) {
                     byte[] chunk = (byte[]) dis.readObject();
