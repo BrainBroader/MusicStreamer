@@ -161,15 +161,7 @@ public class Publisher extends Node
         }
     }
 
-    public void push(String song_name, ObjectInputStream dis, ObjectOutputStream dos) throws IOException {
-
-
-
-    }
-
     public void beginHash() throws IOException {
-
-        //iportName = MD5(getIP() + Integer.toString(port));
 
         for (int i=0;i < brokers_ip.size();i++) {
             Ipp.add(MD5(brokers_ip.get(i) + Integer.toString(brokers_ports.get(i))));
@@ -193,8 +185,6 @@ public class Publisher extends Node
 
             brokers_list.put(artist, br);
         }
-        //System.out.println(brokers_list);
-
     }
 
 
@@ -255,7 +245,6 @@ public class Publisher extends Node
             return IP;
         }
     }
-
 
     public static void loadPorts(String data) {
         File f = null;
@@ -402,5 +391,4 @@ public class Publisher extends Node
     public HashMap<ArrayList<String>, String> getPub_server() {
         return this.pub_server;
     }
-
 }

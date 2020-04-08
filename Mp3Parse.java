@@ -87,6 +87,34 @@ public class Mp3Parse {
 
     }
 
+    public MusicFile reproduce(List<MusicFile> list) {
+
+        int bounds = (list.size() - 1) * 512000;
+        int last = list.get(list.size()-1).getMusicFileExtract().length;
+        bounds = bounds + last;
+
+
+        byte[] array = new byte[bounds];
+
+        int counter = 0;
+        for (int i = 0; i < list.size(); i++) {
+            byte[] chunk = list.get(i).getMusicFileExtract();
+            for (int j = 0; j < chunk.length; j++) {
+                array[counter] = chunk[j];
+                counter++;
+            }
+        }
+
+        MusicFile musicfile = new MusicFile();
+        musicfile.setTrackName(list.get(0).getTrackName());
+        musicfile.setArtistName(list.get(0).getArtistName());
+        musicfile.setAlbumInfo(list.get(0).getAlbumInfo());
+        musicfile.setGenre(list.get(0).getGenre());
+        musicfile.setMusicFileExtract(array);
+
+        return musicfile;
+    }
+
     public static void createMP3(MusicFile m, String path) throws IOException {
 
         File f = null;
@@ -102,7 +130,7 @@ public class Mp3Parse {
         outputstream.write(m.getMusicFileExtract());
 
         outputstream.close();
-        System.out.println("Creating Mp3... "+ path);
+        //System.out.println("Creating Mp3... "+ path);
     }
 
     public static void main(String args[])

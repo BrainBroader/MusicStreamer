@@ -65,22 +65,21 @@ public class PubServer extends Thread {
             MusicFile music = new MusicFile();
             Mp3Parse parse = new Mp3Parse();
 
-            music.setTrackName(p.getSongs().get(j).getTrackName());
+            /*music.setTrackName(p.getSongs().get(j).getTrackName());
             music.setArtistName(p.getSongs().get(j).getArtistName());
             music.setAlbumInfo(p.getSongs().get(j).getAlbumInfo());
-            music.setGenre(p.getSongs().get(j).getGenre());
+            music.setGenre(p.getSongs().get(j).getGenre());*/
 
             List<MusicFile> list = parse.chunks(p.getSongs().get(j).getMusicFileExtract(), p.getSongs().get(j));
 
-            dos.writeObject(music);
+            //dos.writeObject(music);
             dos.writeObject(list.size());
-            System.out.println("13. sending tags: "+music);
-            System.out.println("14. sendings chunks: "+list.size());
+            //System.out.println("13. sending tags: "+music);
+            System.out.println("13. sendings chunks: "+list.size());
+
+            push(list, dos);
 
 
-            /*for (int i = 0; i < list.size(); i++) {
-                dos.writeObject(list.get(i));
-            }*/
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,6 +87,12 @@ public class PubServer extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+    public synchronized void push(List<MusicFile> list, ObjectOutputStream out) throws IOException, ClassNotFoundException {
+        for (int i = 0; i < list.size(); i++) {
+            out.writeObject(list.get(i));
+        }
     }
 
 

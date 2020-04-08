@@ -112,31 +112,32 @@ public class ActionsForConsumer extends Thread {
                 out.writeObject(song_name);
                 System.out.println("11. sending "+song_name );
 
-                MusicFile mus = (MusicFile) in.readObject();
+                //MusicFile mus = (MusicFile) in.readObject();
                 int chunks_size = (int) in.readObject();
-                System.out.println("15. received tags: "+mus);
-                System.out.println("16. sendings chunks: "+chunks_size);
+                //System.out.println("15. received tags: "+mus);
+                System.out.println("14. sendings chunks: "+chunks_size);
 
                 //mus.printTrack();
-                dos.writeObject(mus);
+                //dos.writeObject(mus);
                 dos.writeObject(chunks_size);
-                System.out.println("17. sending tags: "+mus);
-                System.out.println("18. sendings chunks: "+chunks_size);
+                //System.out.println("17. sending tags: "+mus);
+                System.out.println("15. sendings chunks: "+chunks_size);
 
-                /*for (int i = 0; i < chunks_size; i++) {
-                    byte[] chunk = (byte[]) dis.readObject();
-                    this.actions.getB().addQueue(chunk);
-                }*/
+                pull(chunks_size, dos, in);
 
-
-                /*for (int i = 0; i < chunk_size; i++) {
-                    dos.writeObject(b.getQueue().remove());
-                }*/
 
             }
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public synchronized void pull(int chunks_size, ObjectOutputStream dos, ObjectInputStream in) throws IOException, ClassNotFoundException {
+        for (int i = 0; i < chunks_size; i++) {
+            MusicFile chunk = (MusicFile) in.readObject();
+            //chunk.printTrackInfo();
+            dos.writeObject(chunk);
         }
     }
 
@@ -173,6 +174,22 @@ public class ActionsForConsumer extends Thread {
             }
         } catch (IOException e) {
             System.out.println("Error!!!");
+        }
+    }
+
+    public void lock()throws InterruptedException
+    {
+        synchronized(this)
+        {
+            wait();
+        }
+    }
+
+    public void unlock()throws InterruptedException
+    {
+        synchronized(this)
+        {
+            notify();
         }
     }
 

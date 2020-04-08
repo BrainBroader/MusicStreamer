@@ -23,7 +23,7 @@ public class Broker extends Node {
     private static HashMap<String, String> brokers_list = new HashMap<>();
     private static HashMap<ArrayList<String>, String> pub_servers = new HashMap<>();
 
-    private static Queue<byte[]> queue = new LinkedList<>();
+    public static Queue<MusicFile> queue = new LinkedList<>();
 
 
 
@@ -34,7 +34,6 @@ public class Broker extends Node {
         new Broker().openServer(port);
 
     }
-
 
     public void openServer(int PORT) throws IOException {
 
@@ -152,28 +151,6 @@ public class Broker extends Node {
         return port;
     }
 
-    public static <T> ArrayList<T> removeDuplicates(ArrayList<T> list)
-    {
-
-        // Create a new ArrayList
-        ArrayList<T> newList = new ArrayList<T>();
-
-        // Traverse through the first list
-        for (T element : list) {
-
-            // If this element is not present in newList
-            // then add it
-            if (!newList.contains(element)) {
-
-                newList.add(element);
-            }
-        }
-
-        // return the new list
-        return newList;
-    }
-
-    //getting the ip of the broker
     public String getIP() throws IOException {
         try (final DatagramSocket socket = new DatagramSocket()) {
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
@@ -182,22 +159,6 @@ public class Broker extends Node {
         }
     }
 
-
-    public void lock()throws InterruptedException
-    {
-        synchronized(this)
-        {
-            wait();
-        }
-    }
-
-    public void unlock()throws InterruptedException
-    {
-        synchronized(this)
-        {
-            notify();
-        }
-    }
 
     public void setBrokers_ports(ArrayList<Integer> brokers_ports) {
         this.brokers_ports = brokers_ports;
@@ -242,11 +203,11 @@ public class Broker extends Node {
         return this.pub;
     }
 
-    public Queue<byte[]> getQueue() {
+    public Queue<MusicFile> getQueue() {
         return this.queue;
     }
 
-    public void addQueue(byte[] e) {
+    public void addQueue(MusicFile e) {
         this.queue.add(e);
     }
 

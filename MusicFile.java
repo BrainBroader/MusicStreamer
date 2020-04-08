@@ -61,9 +61,30 @@ public class MusicFile implements Serializable {
         return this.musicFileExtract;
     }
 
+    public void lock()throws InterruptedException
+    {
+        synchronized(this)
+        {
+            wait();
+        }
+    }
+
+    public void unlock()throws InterruptedException
+    {
+        synchronized(this)
+        {
+            notify();
+        }
+    }
+
     public void printTrack() {
+        System.out.println("----------------------------------------");
         System.out.println("Title: " + getTrackName() + "\nArtist: " + getArtistName() + "\nAlbum: " + getAlbumInfo() + "\nGenre: " + getGenre());
         System.out.println("----------------------------------------");
+    }
+
+    public void printTrackInfo() {
+        System.out.println(getMusicFileExtract().length + " bytes");
     }
 
 

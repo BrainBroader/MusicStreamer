@@ -4,10 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConHandler extends Thread {
 
@@ -110,10 +107,9 @@ public class ConHandler extends Thread {
                     dos.writeObject(exit);
                 }
                 dos.writeObject(inputString);
-                System.out.println("1. sending " + inputString);
+                //System.out.println("1. sending " + inputString);
 
                 ArrayList<String> list = (ArrayList<String>) dis.readObject();
-                System.out.println("8. arrived");
                 ArrayList<String> keyboard2 = new ArrayList<>();
                 keyboard2.add("exit");
 
@@ -136,27 +132,48 @@ public class ConHandler extends Thread {
                 }
 
                 input_song = list.get(Integer.parseInt(input_song) - 1);
-                System.out.println(input_song);
-                System.out.println("----------------------------------------");
+                //System.out.println(input_song);
+                //System.out.println("----------------------------------------");
 
                 dos.writeObject(input_song);
-                System.out.println("9. sending " + input_song);
-
-                MusicFile music_file = new MusicFile();
-                music_file = (MusicFile) dis.readObject();
 
                 int chunk_size = (int) dis.readObject();
-                System.out.println("19. arrived. tags ");
-                System.out.println("20. arrived chunks ");
 
-            /*ArrayList<byte[]> c = new ArrayList<>();
-            for (int i = 0; i < chunk_size; i++) {
-                byte[] chunk = (byte[]) dis.readObject();
-                c.add(chunk);
-            }*/
+                List<MusicFile> array = new ArrayList<>();
 
-                music_file.printTrack();
-                System.out.println("chunks : " + chunk_size);
+                for (int i = 0; i < chunk_size; i++) {
+                    MusicFile chunk = (MusicFile) dis.readObject();
+                    chunk.printTrackInfo();
+                    array.add(chunk);
+                }
+
+                Mp3Parse parse = new Mp3Parse();
+
+                System.out.println("Do you want to stream or to download it?");
+                String move = scanner.nextLine();
+                move = move.toLowerCase();
+
+                while (!(move.equals("stream") || move.equals("download"))) {
+                    System.out.println("Please try again");
+                    move = scanner.nextLine();
+                    move = move.toLowerCase();
+                }
+
+                if (move.equals("stream")) {
+                    System.out.println("Playing "+ input_song + "...");
+                    String name = input_song.substring(0, input_song.length() - 4);
+
+                    for (int i = 0; i < array.size(); i++) {
+                        String path = name + "-chunk" + (i+1) + ".mp3";
+                        parse.createMP3(array.get(i), System.getProperty("user.dir") + "\\created_songs\\" + path);
+                    }
+                } else {
+                    MusicFile merged = parse.reproduce(array);
+                    parse.createMP3(merged, System.getProperty("user.dir") + "\\created_songs\\" + input_song);
+                    merged.printTrack();
+                    System.out.println(input_song + " saved.");
+                }
+
                 System.out.println();
 
 
@@ -167,33 +184,5 @@ public class ConHandler extends Thread {
                 e.printStackTrace();
             }
         }
-
     }
 }
-
-/*System.out.println("ela kayla");
-
-                    for (int i = 0; i < brokers_ports.size(); i++) {
-
-                        if (brokers_ports.get(i) == PORT) {
-                            brokers_ports.remove(i);
-                        }
-                        if (brokers_ip.get(i).equals(IP)) {
-                            brokers_ip.remove(i);
-                        }
-                    }
-
-                    Random r = new Random();
-                    int number = r.nextInt(brokers_ip.size());
-
-                    s.close();
-                    dis.close();
-                    dos.close();
-
-                    ip = InetAddress.getByName(brokers_ip.get(number));
-                    s = new Socket(ip, (brokers_ports.get(number)));
-
-                    dos = new ObjectOutputStream(s.getOutputStream());
-                    dis = new ObjectInputStream(s.getInputStream());
-
-                    dos.writeObject("reconnect");*/
