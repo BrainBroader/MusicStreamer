@@ -13,11 +13,13 @@ public class PubHandler extends Thread {
     private String IP;
     private int PORT;
     private Publisher pub;
+    private String job;
 
-    public PubHandler(String IP, int PORT, Publisher pub) {
+    public PubHandler(String IP, int PORT, Publisher pub, String job) {
         this.IP = IP;
         this.PORT = PORT;
         this.pub = pub;
+        this.job = job;
     }
 
 
@@ -36,14 +38,22 @@ public class PubHandler extends Thread {
             dos = new ObjectOutputStream(s.getOutputStream());
             dis = new ObjectInputStream(s.getInputStream());
 
-            String p = "Publisher";
-            dos.writeObject(p);
 
-            dos.writeObject(pub.getArtistsList());
-            dos.writeObject(pub.getBrokers_ip());
-            dos.writeObject(pub.getBrokers_ports());
-            dos.writeObject(pub.getBrokers_list());
-            dos.writeObject(pub.getPub_server());
+
+            if (job.equals("connect")) {
+                String p = "Publisher";
+                dos.writeObject(p);
+
+                dos.writeObject(pub.getArtistsList());
+                dos.writeObject(pub.getBrokers_ip());
+                dos.writeObject(pub.getBrokers_ports());
+                dos.writeObject(pub.getBrokers_list());
+                dos.writeObject(pub.getPub_server());
+            } else if (job.equals("reconnect")) {
+                String p = "PubVol2";
+                dos.writeObject(p);
+                dos.writeObject(pub.getBrokers_list());
+            }
 
             /*dos.writeObject(pub);
 
@@ -62,62 +72,4 @@ public class PubHandler extends Thread {
             e.printStackTrace();
         }
     }
-
-    /*public synchronized void push(ObjectInputStream dis, ObjectOutputStream dos) {
-        try
-        {
-
-
-
-
-
-            String p = "Publisher";
-            dos.writeObject(p);
-
-            dos.writeObject(pub.getArtitsList()); //LATHOS STO ARTISTS
-            dos.writeObject(pub.getBrokers_ip());
-            dos.writeObject(pub.getBrokers_ports());
-
-            HashMap<String, String> bl = new HashMap<>();
-            bl = (HashMap<String, String>) dis.readObject();
-            pub.setBroker_list(bl);
-
-            //System.out.println(bl);
-
-            while (true) {
-
-                String art = (String) dis.readObject();
-
-                if (art.equals("exit")) {
-                    break;
-                }
-
-                ArrayList<String> art_fnames = new ArrayList<>();
-
-                for (int i = 0; i < pub.getSongs().size(); i++) {
-                    if (art.equals(pub.getSongs().get(i).getArtistName())) {
-                        art_fnames.add(pub.getFilenames().get(i));
-                    }
-                }
-
-                /*for (int i = 0; i < art_fnames.size(); i++) {
-                    System.out.println(art_fnames.get(i));
-                }
-
-                dos.writeObject(art_fnames);
-            }
-
-
-
-            // closing resources
-            dis.close();
-            dos.close();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }*/
-
-
-
-
 }

@@ -7,7 +7,7 @@ import java.util.*;
 import java.net.*;
 
 // Server class
-public class Broker extends Node {
+public class Broker extends Thread {
 
     private static int port;
     private static ArrayList<ActionsForPub> publishers = new ArrayList<>();
@@ -40,7 +40,7 @@ public class Broker extends Node {
         // server is listening on port 5056
         ServerSocket ss = new ServerSocket(PORT);
         System.out.println("Server started.");
-        System.out.println("Waiting for a connection...");
+        System.out.println("Server's IP: " + getIP() + ", Server's PORT: " + PORT);
 
 
         while (true) {
@@ -62,7 +62,7 @@ public class Broker extends Node {
                     System.out.println("Assigning new thread for this publisher.");
 
                     // create a new thread object
-                    ActionsForPub t = new ActionsForPub(s, dis, dos, PORT, this);
+                    ActionsForPub t = new ActionsForPub(s, dis, dos, PORT, this, "connect");
                     publishers.add(t);
                     // Invoking the start() method
                     t.start();
@@ -88,6 +88,17 @@ public class Broker extends Node {
                     consumers.add(t2);
                     // Invoking the start() method
                     t2.start();
+                } else if (received.equals("PubVol2")) {
+
+                    System.out.println("\nA new publisher connected. : " + s);
+                    System.out.println("Assigning new thread for this publisher.");
+
+                    // create a new thread object
+                    ActionsForPub t = new ActionsForPub(s, dis, dos, PORT, this, "reconnect");
+                    publishers.add(t);
+                    // Invoking the start() method
+                    t.start();
+
                 }
 
             } catch (Exception e) {
@@ -217,5 +228,9 @@ public class Broker extends Node {
 
     public HashMap<ArrayList<String>, String> getPub_servers() {
         return this.pub_servers;
+    }
+
+    public void setBrokers_list(HashMap<String, String> brokers_list) {
+        this.brokers_list = brokers_list;
     }
 }

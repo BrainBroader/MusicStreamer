@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class Consumer extends Node {
+public class Consumer extends Thread {
 
     private static ArrayList<Integer> brokers_ports = new ArrayList<>();
     private static ArrayList<String> brokers_ip = new ArrayList<>();

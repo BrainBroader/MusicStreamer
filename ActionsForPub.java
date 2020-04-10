@@ -1,4 +1,4 @@
-import java.io.*; 
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -9,55 +9,63 @@ class ActionsForPub extends Thread
     final Socket s;
     private int PORT;
     private Broker b;
-      
-  
-    // Constructor 
-    public ActionsForPub(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT, Broker b)
-    { 
+    private String job;
+
+
+    // Constructor
+    public ActionsForPub(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT, Broker b, String job)
+    {
         this.s = s;
         this.dis = dis;
         this.dos = dos;
         this.PORT = PORT;
         this.b = b;
-    } 
-  
+        this.job = job;
+    }
+
     @Override
     public void run() {
 
         try {
 
-            ArrayList<String> artists = new ArrayList<>();
-            artists = (ArrayList<String>) dis.readObject();
-            b.saveArtists(artists);
+            if (job.equals("connect")) {
+                ArrayList<String> artists = new ArrayList<>();
+                artists = (ArrayList<String>) dis.readObject();
+                b.saveArtists(artists);
 
-            ArrayList<String> ips = new ArrayList<>();
-            ips = (ArrayList<String>) dis.readObject();
-            b.setBrokers_ip(ips);
+                ArrayList<String> ips = new ArrayList<>();
+                ips = (ArrayList<String>) dis.readObject();
+                b.setBrokers_ip(ips);
 
-            ArrayList<Integer> ports = new ArrayList<>();
-            ports = (ArrayList<Integer>) dis.readObject();
-            b.setBrokers_ports(ports);
+                ArrayList<Integer> ports = new ArrayList<>();
+                ports = (ArrayList<Integer>) dis.readObject();
+                b.setBrokers_ports(ports);
 
-            HashMap<String, String> bl = new HashMap<>();
-            bl = (HashMap<String, String>) dis.readObject();
+                HashMap<String, String> bl = new HashMap<>();
+                bl = (HashMap<String, String>) dis.readObject();
 
-            for (Map.Entry me : bl.entrySet()) {
-                b.putBroker_list((String)me.getKey(), (String)me.getValue());
-                //System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
+                for (Map.Entry me : bl.entrySet()) {
+                    b.putBroker_list((String) me.getKey(), (String) me.getValue());
+                    //System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
+                }
+
+                HashMap<ArrayList<String>, String> ps = new HashMap<>();
+                ps = (HashMap<ArrayList<String>, String>) dis.readObject();
+
+                for (Map.Entry m : ps.entrySet()) {
+                    b.addPub_servers((ArrayList<String>) m.getKey(), (String) m.getValue());
+                    //System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
+                }
+            } else if (job.equals("reconnect")) {
+                HashMap<String, String> bl = new HashMap<>();
+                bl = (HashMap<String, String>) dis.readObject();
+                b.setBrokers_list(new HashMap<>());
+                for (Map.Entry me : bl.entrySet()) {
+                    b.putBroker_list((String) me.getKey(), (String) me.getValue());
+                    //System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
+                }
+                System.out.println(bl);
             }
-
-            HashMap<ArrayList<String>, String> ps = new HashMap<>();
-            ps = (HashMap<ArrayList<String>, String>) dis.readObject();
-
-            for (Map.Entry m : ps.entrySet()) {
-                b.addPub_servers((ArrayList<String>)m.getKey(), (String)m.getValue());
-                //System.out.println("Key: "+me.getKey() + " & Value: " + me.getValue());
-            }
-
-            /*Publisher p = (Publisher) dis.readObject();
-            b.addPublisher(p);
-
-            dos.writeObject(b);*/
 
             System.out.println("Closing...");
             System.out.println("Connection closed");

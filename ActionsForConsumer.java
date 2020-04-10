@@ -16,8 +16,6 @@ public class ActionsForConsumer extends Thread {
     private Broker b;
     private static String r;
 
-    //private static ArrayList<String> art_songs;
-
 
     public ActionsForConsumer(Socket s, ObjectInputStream dis, ObjectOutputStream dos, int PORT, Broker b)
     {
@@ -40,7 +38,6 @@ public class ActionsForConsumer extends Thread {
     }
 
 
-
     @Override
     public void run()
     {
@@ -59,7 +56,6 @@ public class ActionsForConsumer extends Thread {
             if (exit.equals("no") || r.equals("reconnect")) {
 
                 String artist = (String) dis.readObject();
-                System.out.println("2. received "+artist);
 
                 ArrayList<String> ips = new ArrayList<>();
                 ArrayList<Integer> ports = new ArrayList<>();
@@ -91,38 +87,22 @@ public class ActionsForConsumer extends Thread {
                 in = new ObjectInputStream(socket.getInputStream());
 
                 out.writeObject(artist);
-                System.out.println("3. sending "+ artist);
 
                 ArrayList<String> art_list = new ArrayList<>();
                 art_list = (ArrayList<String>) in.readObject();
-                System.out.println("6. received "+art_list);
 
                 for (int i = 0; i < art_list.size(); i++) {
                     art_songs.add(art_list.get(i));
                 }
 
                 dos.writeObject(art_songs);
-                System.out.println("7. sending "+art_songs);
-
 
                 String song_name = (String) dis.readObject();
-                System.out.println("10. received "+song_name );
-                System.out.println(song_name);
-
                 out.writeObject(song_name);
-                System.out.println("11. sending "+song_name );
 
-                //MusicFile mus = (MusicFile) in.readObject();
                 int chunks_size = (int) in.readObject();
-                //System.out.println("15. received tags: "+mus);
-                System.out.println("14. sendings chunks: "+chunks_size);
 
-                //mus.printTrack();
-                //dos.writeObject(mus);
                 dos.writeObject(chunks_size);
-                //System.out.println("17. sending tags: "+mus);
-                System.out.println("15. sendings chunks: "+chunks_size);
-
                 pull(chunks_size, dos, in);
 
 
@@ -136,7 +116,6 @@ public class ActionsForConsumer extends Thread {
     public synchronized void pull(int chunks_size, ObjectOutputStream dos, ObjectInputStream in) throws IOException, ClassNotFoundException {
         for (int i = 0; i < chunks_size; i++) {
             MusicFile chunk = (MusicFile) in.readObject();
-            //chunk.printTrackInfo();
             dos.writeObject(chunk);
         }
     }
@@ -176,87 +155,4 @@ public class ActionsForConsumer extends Thread {
             System.out.println("Error!!!");
         }
     }
-
-    public void lock()throws InterruptedException
-    {
-        synchronized(this)
-        {
-            wait();
-        }
-    }
-
-    public void unlock()throws InterruptedException
-    {
-        synchronized(this)
-        {
-            notify();
-        }
-    }
-
-
-    /*public synchronized void stream() {
-
-        String received;
-        String toreturn;
-
-        try {
-
-
-
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }*/
-
-    /*public synchronized void stream_reconnect() {
-
-        Socket s = null;
-        InetAddress ip = null;
-        ObjectOutputStream dos = null;
-        ObjectInputStream dis = null;
-
-        try {
-
-            String artist = (String) dis.readObject();
-            System.out.println("Artist : " +artist);
-
-
-
-            while (!b.getFlag2()) {
-                try {
-                    b.send();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            ArrayList<String> list = new ArrayList<>();
-
-            int s = b.getPubTocon().size();
-            for (int i = 0; i < s; i++) {
-                String removed = b.getPubTocon().remove();
-                list.add(removed);
-            }
-
-            dos.writeObject(list);
-            b.setFlag2(false);
-            b.arrive();
-
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }*/
-
-
-
 }

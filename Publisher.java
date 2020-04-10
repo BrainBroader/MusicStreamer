@@ -9,8 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-// Client class 
-public class Publisher extends Node
+public class Publisher extends Thread
 {
     private static ArrayList<Integer> brokers_ports = new ArrayList<>();
     private static ArrayList<String> brokers_ip = new ArrayList<>();
@@ -49,20 +48,25 @@ public class Publisher extends Node
 
     public static void main(String[] args) throws Exception {
 
-        System.out.print("From : ");
+        System.out.print("Type a folder: ");
         Scanner keyboard = new Scanner(System.in);
+        String dpath = keyboard.nextLine();
+
+        System.out.print("From : ");
         String from1 = keyboard.nextLine();
 
         System.out.print("To : ");
         String to1 = keyboard.nextLine();
-        System.out.println();
+
         from1 = from1.toLowerCase();
         to1 = to1.toLowerCase();
 
         char from = from1.charAt(0);
         char to = to1.charAt(0);
 
-        String filepath = System.getProperty("user.dir") + "\\dataset1\\Comedy";
+        System.out.println();
+
+        String filepath = System.getProperty("user.dir") + "\\" + dpath;
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
         for (Path path : stream) {
@@ -81,15 +85,12 @@ public class Publisher extends Node
                     songs.add(m);
                     addArtist(m.getArtistName());
                     filenames.add(path.getFileName().toString());
-                    //System.out.println(path.getFileName()+" :"+m.getArtistName());
-
                 }
             }
         }
         stream.close();
 
         System.out.println("Tracks : "+songs.size());
-
 
         loadPorts("brokers1.txt");
         int port = loadPorts2("Publishers1.txt");
@@ -99,22 +100,21 @@ public class Publisher extends Node
         String iport = pub.getIP() + " " +Integer.toString(port);
         pub_server.put(artists, iport);
 
-
         pub.beginHash();
         System.out.println(brokers_list);
 
-        pub.connect();
+        pub.connect("connect");
 
         pub.openServer(port);
 
     }
 
-    public void connect() {
+    public void connect(String job) {
 
         ArrayList<PubHandler> pub_array = new ArrayList<>();
 
         for (int i = 0; i < brokers_ip.size(); i++) {
-            PubHandler handler = new PubHandler(brokers_ip.get(i), brokers_ports.get(i), this);
+            PubHandler handler = new PubHandler(brokers_ip.get(i), brokers_ports.get(i), this, job);
             pub_array.add(handler);
             handler.start();
         }
@@ -130,10 +130,9 @@ public class Publisher extends Node
 
     public void openServer(int PORT) throws IOException {
 
-        // server is listening on port 5056
         ServerSocket ss = new ServerSocket(PORT);
         System.out.println("Server started.");
-        System.out.println("Waiting for a connection...");
+        System.out.println("Server's IP: " + getIP() + ", Server's PORT: " + PORT);
 
 
         while (true) {
@@ -151,8 +150,6 @@ public class Publisher extends Node
 
                 PubServer server = new PubServer(s, dis, dos, PORT, this);
                 server.start();
-
-
 
             } catch (Exception e) {
                 s.close();
@@ -190,9 +187,7 @@ public class Publisher extends Node
 
     //Finds in which Broker this
     public BigInteger findBroker(BigInteger artist) {
-
         BigInteger big = BigInteger.valueOf(0);
-
 
         for (int j = (Ipp.size() - 1); j >= 0; j--) {
             if ((j == (Ipp.size() - 1)) && (artist.compareTo(Ipp.get(j)) > 0)) {
@@ -390,5 +385,33 @@ public class Publisher extends Node
 
     public HashMap<ArrayList<String>, String> getPub_server() {
         return this.pub_server;
+    }
+
+    public void setBrokers_ports(ArrayList<Integer> brokers_ports) {
+        this.brokers_ports = brokers_ports;
+    }
+
+    public void setBrokers_ip(ArrayList<String> brokers_ip) {
+        this.brokers_ip = brokers_ip;
+    }
+
+    public void setArtists(ArrayList<String> artists) {
+        this.artists = artists;
+    }
+
+    public void setH_artists(ArrayList<BigInteger> h_artists) {
+        this.h_artists = h_artists;
+    }
+
+    public void setHash_ip(HashMap<BigInteger, String> hash_ip) {
+        this.hash_ip = hash_ip;
+    }
+
+    public void setIpp(ArrayList<BigInteger> ipp) {
+        this.Ipp = ipp;
+    }
+
+    public void setHash_art(HashMap<BigInteger, String> hash_art) {
+        this.hash_art = hash_art;
     }
 }
