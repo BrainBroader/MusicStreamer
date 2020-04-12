@@ -66,6 +66,8 @@ public class Publisher extends Thread
 
         System.out.println();
 
+        int port = loadPorts2("Publishers1.txt");
+
         String filepath = System.getProperty("user.dir") + "\\" + dpath;
         Path dir = FileSystems.getDefault().getPath(filepath);
         DirectoryStream<Path> stream = Files.newDirectoryStream( dir );
@@ -93,7 +95,6 @@ public class Publisher extends Thread
         System.out.println("Tracks : "+songs.size());
 
         loadPorts("brokers1.txt");
-        int port = loadPorts2("Publishers1.txt");
 
         Publisher pub = new Publisher(port,from, to);
 
@@ -101,7 +102,6 @@ public class Publisher extends Thread
         pub_server.put(artists, iport);
 
         pub.beginHash();
-        System.out.println(brokers_list);
 
         pub.connect("connect");
 

@@ -34,7 +34,6 @@ public class Consumer extends Thread {
     }
 
     public static void loadPorts(String data) {
-        //ArrayList<Integer> array = new ArrayList<Integer>();
         File f = null;
         BufferedReader reader = null;
         String line;

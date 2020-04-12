@@ -1,8 +1,4 @@
 import java.io.*;
-import java.lang.reflect.Array;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.net.*;
 
@@ -59,7 +55,7 @@ public class Broker extends Thread {
 
                 if (received.equals("Publisher")) {
                     System.out.println("\nA new publisher connected. : " + s);
-                    System.out.println("Assigning new thread for this publisher.");
+                    //System.out.println("Assigning new thread for this publisher.");
 
                     // create a new thread object
                     ActionsForPub t = new ActionsForPub(s, dis, dos, PORT, this, "connect");
@@ -70,7 +66,7 @@ public class Broker extends Thread {
                 } else if (received.equals("Consumer")) {
 
                     System.out.println("\nA new consumer connected. : " + s);
-                    System.out.println("Assigning new thread for this consumer.");
+                    //System.out.println("Assigning new thread for this consumer.");
 
                     // create a new thread object
                     ActionsForConsumer t2 = new ActionsForConsumer(s, dis, dos, PORT, this);
@@ -80,8 +76,8 @@ public class Broker extends Thread {
 
                 } else if (received.equals("reconnect")) {
 
-                    System.out.println("\nA new consumer connected. : " + s);
-                    System.out.println("Assigning new thread for this consumer.");
+                    System.out.println("\nA consumer reconnected. : " + s);
+                    //System.out.println("Assigning new thread for this consumer.");
 
                     // create a new thread object
                     ActionsForConsumer t2 = new ActionsForConsumer(s, dis, dos, PORT, this, "reconnect");
@@ -89,9 +85,6 @@ public class Broker extends Thread {
                     // Invoking the start() method
                     t2.start();
                 } else if (received.equals("PubVol2")) {
-
-                    System.out.println("\nA new publisher connected. : " + s);
-                    System.out.println("Assigning new thread for this publisher.");
 
                     // create a new thread object
                     ActionsForPub t = new ActionsForPub(s, dis, dos, PORT, this, "reconnect");

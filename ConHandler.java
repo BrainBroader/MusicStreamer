@@ -57,7 +57,7 @@ public class ConHandler extends Thread {
                 for (int i = 1; i <= artists.size(); i++) {
                     keyboard.add(String.valueOf(i));
                     keyboard.add(artists.get(i-1).toLowerCase());
-                    arts.add(artists.get(i-1)); //
+                    arts.add(artists.get(i-1));
                 }
                 keyboard.add("exit");
 
@@ -172,7 +172,6 @@ public class ConHandler extends Thread {
 
                 for (int i = 0; i < chunk_size; i++) {
                     MusicFile chunk = (MusicFile) dis.readObject();
-                    chunk.printTrackInfo();
                     array.add(chunk);
                 }
 
@@ -205,7 +204,7 @@ public class ConHandler extends Thread {
 
                 System.out.println();
 
-                this.arts = new ArrayList<>(); //
+                this.arts = new ArrayList<>();
 
                 dis.close();
                 dos.close();
@@ -213,11 +212,9 @@ public class ConHandler extends Thread {
             } catch (Exception e) {
 
                 System.out.println("Server is down..Connecting to another server...");
-                //System.out.println("[ "+IP + " ][ " + PORT + " ]");
 
                 for (int i = 0; i < this.brokers_ports.size(); i++) {
                     if ((this.brokers_ports.get(i) == this.PORT) && (this.brokers_ip.get(i).equals(this.IP))) {
-                        //System.out.println(this.brokers_ip.get(i) + " " + this.brokers_ports.get(i));
                         this.brokers_ports.remove(i);
                         this.brokers_ip.remove(i);
                         break;
@@ -228,10 +225,8 @@ public class ConHandler extends Thread {
                 }
                 Random r = new Random();
                 int number = r.nextInt(this.brokers_ip.size());
-                //System.out.println(number);
                 this.IP = this.brokers_ip.get(number);
                 this.PORT = this.brokers_ports.get(number);
-                //System.out.println("this.IP = "+ this.IP + " this.PORT = "+this.PORT);
 
                 Publisher p = new Publisher();
                 p.setArtists(this.arts);
@@ -249,7 +244,7 @@ public class ConHandler extends Thread {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                //System.out.println(p.getBrokers_list() + "[UPDATED]");
+
                 p = new Publisher();
                 p.connect("reconnect");
             }

@@ -1,12 +1,9 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class PubHandler extends Thread {
 
@@ -55,21 +52,14 @@ public class PubHandler extends Thread {
                 dos.writeObject(pub.getBrokers_list());
             }
 
-            /*dos.writeObject(pub);
-
-            Broker b = (Broker) dis.readObject();
-            if (!pub.getBrokers().contains(b)) {
-                pub.addBrokers(b);
-            }*/
-
 
             s.close();
 
 
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }
