@@ -1,11 +1,10 @@
+import MusicFile.MusicFile;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Scanner;
 
 public class ActionsForConsumer extends Thread {
 
