@@ -3,8 +3,11 @@ import MusicFile.MusicFile;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Scanner;
 
 public class ActionsForConsumer extends Thread {
 
@@ -43,7 +46,9 @@ public class ActionsForConsumer extends Thread {
         try {
             if (r.equals("firstTime")) {
                 dos.writeObject(b.getBrokers_list());
+                dos.flush();
                 dos.writeObject(b.getArtists());
+                dos.flush();
             }
 
             String exit = "";
@@ -52,7 +57,7 @@ public class ActionsForConsumer extends Thread {
                 exit = (String) dis.readObject();
             }
 
-            if (exit.equals("no") || r.equals("reconnect")) {
+            if (exit.equals("no") || r.equals("reconnect") || r.equals("part2")) {
 
                 String artist = (String) dis.readObject();
 
@@ -85,24 +90,37 @@ public class ActionsForConsumer extends Thread {
                 out = new ObjectOutputStream(socket.getOutputStream());
                 in = new ObjectInputStream(socket.getInputStream());
 
-                out.writeObject(artist);
+                if (exit.equals("no") || r.equals("reconnect")) {
+                    out.writeObject("part1");
+                    out.flush();
+                    out.writeObject(artist);
+                    out.flush();
 
-                ArrayList<String> art_list = new ArrayList<>();
-                art_list = (ArrayList<String>) in.readObject();
+                    ArrayList<String> art_list = new ArrayList<>();
+                    art_list = (ArrayList<String>) in.readObject();
 
-                for (int i = 0; i < art_list.size(); i++) {
-                    art_songs.add(art_list.get(i));
+                    for (int i = 0; i < art_list.size(); i++) {
+                        art_songs.add(art_list.get(i));
+                    }
+
+                    dos.writeObject(art_songs);
+                    dos.flush();
+
+                } else if (r.equals("part2")) {
+
+                    String song_name = (String) dis.readObject();
+                    out.writeObject("part2");
+                    out.flush();
+
+                    out.writeObject(song_name);
+                    out.flush();
+
+                    int chunks_size = (int) in.readObject();
+
+                    dos.writeObject(chunks_size);
+                    dos.flush();
+                    pull(chunks_size, dos, in);
                 }
-
-                dos.writeObject(art_songs);
-
-                String song_name = (String) dis.readObject();
-                out.writeObject(song_name);
-
-                int chunks_size = (int) in.readObject();
-
-                dos.writeObject(chunks_size);
-                pull(chunks_size, dos, in);
 
 
             }
@@ -116,6 +134,7 @@ public class ActionsForConsumer extends Thread {
         for (int i = 0; i < chunks_size; i++) {
             MusicFile chunk = (MusicFile) in.readObject();
             dos.writeObject(chunk);
+            dos.flush();
         }
     }
 

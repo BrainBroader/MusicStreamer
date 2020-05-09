@@ -31,35 +31,43 @@ public class PubServer extends Thread {
 
         try {
 
-            String artist = (String) dis.readObject();
+            String part = (String) dis.readObject();
 
-            ArrayList<String> art_fnames = new ArrayList<>();
+            if (part.equals("part1")) {
 
-            for (int i = 0; i < p.getSongs().size(); i++) {
-                if (artist.equals(p.getSongs().get(i).getArtistName())) {
-                    art_fnames.add(p.getFilenames().get(i));
+                String artist = (String) dis.readObject();
+
+                ArrayList<String> art_fnames = new ArrayList<>();
+
+                for (int i = 0; i < p.getSongs().size(); i++) {
+                    if (artist.equals(p.getSongs().get(i).getArtistName())) {
+                        art_fnames.add(p.getFilenames().get(i));
+                    }
                 }
-            }
 
-            dos.writeObject(art_fnames);
+                dos.writeObject(art_fnames);
+                dos.flush();
 
+            } else if (part.equals("part2")) {
 
-            String song_name = (String) dis.readObject();
-            int j;
+                String song_name = (String) dis.readObject();
+                int j;
 
-            for (j = 0; j < p.getFilenames().size(); j++) {
-                if (p.getFilenames().get(j).equals(song_name)) {
-                    break;
+                for (j = 0; j < p.getFilenames().size(); j++) {
+                    if (p.getFilenames().get(j).equals(song_name)) {
+                        break;
+                    }
                 }
+
+                MusicFile parse = new MusicFile();
+
+                List<MusicFile> list = parse.chunks(p.getSongs().get(j).getMusicFileExtract(), p.getSongs().get(j));
+
+                dos.writeObject(list.size());
+                dos.flush();
+                push(list, dos);
+
             }
-
-            MusicFile music = new MusicFile();
-            Mp3Parse parse = new Mp3Parse();
-
-            List<MusicFile> list = parse.chunks(p.getSongs().get(j).getMusicFileExtract(), p.getSongs().get(j));
-
-            dos.writeObject(list.size());
-            push(list, dos);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,6 +80,7 @@ public class PubServer extends Thread {
     public synchronized void push(List<MusicFile> list, ObjectOutputStream out) throws IOException, ClassNotFoundException {
         for (int i = 0; i < list.size(); i++) {
             out.writeObject(list.get(i));
+            out.flush();
         }
     }
 }

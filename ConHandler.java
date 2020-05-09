@@ -177,7 +177,7 @@ public class ConHandler extends Thread {
                     array.add(chunk);
                 }
 
-                Mp3Parse parse = new Mp3Parse();
+                MusicFile parse = new MusicFile();
 
                 System.out.println("Do you want to stream or to download it?");
                 String move = scanner.nextLine();

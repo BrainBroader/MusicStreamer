@@ -76,6 +76,18 @@ public class Broker extends Thread {
                     // Invoking the start() method
                     t2.start();
 
+                } else if (received.equals("ConsumerPart2")) {
+
+                    System.out.println("\nPART2 consumer connected. : " + s);
+                    //System.out.println("Assigning new thread for this consumer.");
+
+                    // create a new thread object
+                    ActionsForConsumer t2 = new ActionsForConsumer(s, dis, dos, PORT, this,"part2");
+                    consumers.add(t2);
+                    // Invoking the start() method
+                    t2.start();
+
+
                 } else if (received.equals("reconnect")) {
 
                     System.out.println("\nA consumer reconnected. : " + s);
