@@ -3,19 +3,11 @@ import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
-
-import java.io.*;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
-
-
 
 public class Mp3Parse {
 
-    public Mp3Parse() {
-
-    }
+    public Mp3Parse() {}
 
     public static MusicFile mp3extraction(String path) throws Exception, InvalidDataException {
 
@@ -44,8 +36,11 @@ public class Mp3Parse {
             genre = tag2.getGenreDescription();
         }
 
+        long duration = mp3file.getLengthInMilliseconds();
+        //long duration = mp3file.getLengthInSeconds();
+
         //creating a musicfile object
-        MusicFile song = new MusicFile(trackName,artistName,albumInfo,genre,musicFileExtract);
+        MusicFile song = new MusicFile(trackName,artistName,albumInfo,genre,duration,musicFileExtract);
 
         return song;
     }
