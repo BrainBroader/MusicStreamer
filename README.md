@@ -1,5 +1,5 @@
 # MusicStreamer
-Distributed Systems Assingment:implementation of a music streaming application
+Distributed Systems Assingment: implementation of a music streaming application (back-end)
 
 Στα brokers1.txt και Publishers2.txt περιέχονται τα IP και ports των brokers και publishers αντίστοιχα και χρησιμεύουν στην επικοινωνία μεταξύ τους.
 Οπότε πρέπει να αλλάξουν οι IP στα αρχεία ανάλογα με την IP του υπολογιστή που εκτελούνται. Το brokers1.txt φορτώνεται και στον consumer για την πρώτη σύνδεση με τυχαίο broker.
